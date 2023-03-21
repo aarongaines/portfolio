@@ -1,0 +1,17 @@
+{
+  "index.qmd": {
+    "index.html": "a6de8385"
+  },
+  "about.qmd": {
+    "about.html": "5781f3ea"
+  },
+  "portfolio.qmd": {
+    "portfolio.html": "8947931e"
+  },
+  "challenge1.ipynb": {
+    "challenge1.html": "35853177"
+  },
+  "nlp_ann.ipynb": {
+    "nlp_ann.html": "f66d74af"
+  }
+}

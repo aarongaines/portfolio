@@ -1,0 +1,9 @@
+---
+title: "Portfolio"
+---
+Below is a list of links to different projects of mine that I have selected to hopefully provide a demonstration of the breadth of skills and knowledge I have gained throughout my acedemic and professional experience.
+
+## Projects
+[Natural Language Processing and Neural Network Classification](nlp_ann.ipynb)
+
+[Another Placeholder Project](nlp_ann.ipynb)

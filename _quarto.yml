@@ -20,7 +20,7 @@ website:
 
 format:
   html:
-    theme: pulse
+    theme: spacelab
     css: styles.css
     toc: true
     max-width: 2800px

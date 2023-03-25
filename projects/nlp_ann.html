@@ -1,0 +1,1431 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.475">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Aaron Gaines – nlp_ann</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Aaron Gaines</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html">
+ <span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../portfolio.html">
+ <span class="menu-text">Portfolio</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../about.html">
+ <span class="menu-text">About Me</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-contact" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Contact</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-contact">    
+        <li>
+    <a class="dropdown-item" href="https://www.linkedin.com/in/aaron-m-gaines/">
+ <span class="dropdown-text">LinkedIn</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#natural-language-processing-nlp-and-neural-networks-with-nltk-and-the-tensorflow-keras-api" id="toc-natural-language-processing-nlp-and-neural-networks-with-nltk-and-the-tensorflow-keras-api" class="nav-link active" data-scroll-target="#natural-language-processing-nlp-and-neural-networks-with-nltk-and-the-tensorflow-keras-api">Natural Language Processing (NLP) and Neural Networks with NLTK and the Tensorflow Keras API</a>
+  <ul class="collapse">
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#import-libraries" id="toc-import-libraries" class="nav-link" data-scroll-target="#import-libraries">Import Libraries</a></li>
+  <li><a href="#custom-functions" id="toc-custom-functions" class="nav-link" data-scroll-target="#custom-functions">Custom Functions</a></li>
+  <li><a href="#import-data" id="toc-import-data" class="nav-link" data-scroll-target="#import-data">Import Data</a></li>
+  <li><a href="#add-features" id="toc-add-features" class="nav-link" data-scroll-target="#add-features">Add Features</a></li>
+  <li><a href="#tokenize-and-vectorize-data" id="toc-tokenize-and-vectorize-data" class="nav-link" data-scroll-target="#tokenize-and-vectorize-data">Tokenize and Vectorize Data</a></li>
+  <li><a href="#scale-data" id="toc-scale-data" class="nav-link" data-scroll-target="#scale-data">Scale Data</a></li>
+  <li><a href="#train-model" id="toc-train-model" class="nav-link" data-scroll-target="#train-model">Train Model</a></li>
+  <li><a href="#evaluate-model" id="toc-evaluate-model" class="nav-link" data-scroll-target="#evaluate-model">Evaluate Model</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+
+<section id="natural-language-processing-nlp-and-neural-networks-with-nltk-and-the-tensorflow-keras-api" class="level1">
+<h1>Natural Language Processing (NLP) and Neural Networks with NLTK and the Tensorflow Keras API</h1>
+<section id="introduction" class="level3">
+<h3 class="anchored" data-anchor-id="introduction">Introduction</h3>
+<p>In this notebook, I will be building a model to predict whether or not a tweet is about a real disaster, using the data given for the assignment. The data has been provided in separate training and test sets, so only the training set will be used in the model training/validation while the test set will be saved for the end to evalute the model.</p>
+<p>First the data will be loaded and explored, then the data will be cleaned and preprocessed, and finally the model will be built and trained. I decided to add some features to the data set (e.g.&nbsp;number of words in a tweet) to see if they would improve the model’s performance. I also used the prebuild sentiment analysis model from the NLTK library to see if it would improve the model’s performance. Finally I used the sklearn library to vectorize the text data with the TF-IDF vectorizer and the nltk tweet tokenizer to tokenize the text data. After all of this, I used the tensorflow.keras library to build and train the model.</p>
+</section>
+<section id="import-libraries" class="level3">
+<h3 class="anchored" data-anchor-id="import-libraries">Import Libraries</h3>
+<div class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> nltk</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> nltk.corpus <span class="im">import</span> stopwords</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> nltk.sentiment.vader <span class="im">import</span> SentimentIntensityAnalyzer</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.feature_extraction.text <span class="im">import</span> TfidfVectorizer</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> nltk.tokenize <span class="im">import</span> TweetTokenizer</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tensorflow <span class="im">as</span> tf</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> pyplot <span class="im">as</span> plt</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> roc_curve</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>random.seed(<span class="dv">42</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>nltk.download(<span class="st">'stopwords'</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>nltk.download(<span class="st">'vader_lexicon'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[nltk_data] Downloading package stopwords to
+[nltk_data]     C:\Users\chief\AppData\Roaming\nltk_data...
+[nltk_data]   Package stopwords is already up-to-date!
+[nltk_data] Downloading package vader_lexicon to
+[nltk_data]     C:\Users\chief\AppData\Roaming\nltk_data...
+[nltk_data]   Package vader_lexicon is already up-to-date!</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<pre><code>True</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>stop_words <span class="op">=</span> <span class="bu">set</span>(stopwords.words(<span class="st">'english'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="custom-functions" class="level3">
+<h3 class="anchored" data-anchor-id="custom-functions">Custom Functions</h3>
+<ol type="1">
+<li><em>dtype_convert</em>: converts the data type of a column in a dataframe</li>
+<li><em>link_count</em>: if a link exists in a tweet</li>
+<li><em>get_polarity</em>: returns the polarity of a tweet using the NLTK sentiment analysis model</li>
+<li><em>return_xy</em>: returns the x and y data from a dataframe</li>
+<li><em>return_vectorized_data</em>: returns the vectorized text and extra features from a dataframe</li>
+<li><em>plot_history</em>: plots the training and validation accuracy and loss from a history object</li>
+<li><em>plot_roc</em>: plots the ROC curve using the best saved model and the test data</li>
+</ol>
+<div class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> dtype_convert(data : pd.DataFrame):</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Converts the data types of the numeric columns in a dataframe to the smallest possible type.</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Parameters</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">    ----------</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">    data : pd.DataFrame to have its numeric columns converted.</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    int_list <span class="op">=</span> [<span class="st">'int8'</span>, <span class="st">'int16'</span>, <span class="st">'int32'</span>, <span class="st">'int64'</span>]</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    float_list <span class="op">=</span> [<span class="st">'float16'</span>, <span class="st">'float32'</span>, <span class="st">'float64'</span>]</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> col <span class="kw">in</span> data.select_dtypes(include<span class="op">=</span>np.number).columns:</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>        data_type <span class="op">=</span> data[col].dtype</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Convert to int</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> data_type <span class="kw">in</span> int_list:</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>            n_range <span class="op">=</span> [<span class="bu">abs</span>(data[col].<span class="bu">max</span>()), <span class="bu">abs</span>(data[col].<span class="bu">min</span>())]</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>            n_max <span class="op">=</span> <span class="bu">max</span>(n_range)</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> n_max <span class="op">&lt;=</span> <span class="dv">127</span>:</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>                data[col] <span class="op">=</span> data[col].astype(np.int8)</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>            <span class="cf">elif</span> n_max <span class="op">&lt;=</span> <span class="dv">32767</span>:</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>                data[col] <span class="op">=</span> data[col].astype(np.int16)</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>            <span class="cf">elif</span> n_max <span class="op">&lt;=</span> <span class="dv">2147483647</span>:</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>                data[col] <span class="op">=</span> data[col].astype(np.int32)</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>            <span class="cf">else</span>:</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>                data[col] <span class="op">=</span> data[col].astype(np.int64)</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Convert to float</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>        <span class="cf">elif</span> data_type <span class="kw">in</span> float_list:</span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>                n_range <span class="op">=</span> [<span class="bu">abs</span>(data[col].<span class="bu">max</span>()), <span class="bu">abs</span>(data[col].<span class="bu">min</span>())]</span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>                n_max <span class="op">=</span> <span class="bu">max</span>(n_range)</span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> n_max <span class="op">&lt;=</span> <span class="fl">3.4e+38</span>:</span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>                    data[col] <span class="op">=</span> data[col].astype(np.float32)</span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>                <span class="cf">else</span>:</span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>                    data[col] <span class="op">=</span> data[col].astype(np.float64)</span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> data</span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>        </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> link_count(text : <span class="bu">str</span>):</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Returns binary value indicating whether a tweet contains a link or not.</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Parameters</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">    ----------</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">    text : str to be checked for links."""</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Checks string for http</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    links <span class="op">=</span> text.count(<span class="st">'http'</span>)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> links <span class="op">&gt;</span> <span class="dv">0</span>:</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="dv">1</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_polarity(row : pd.Series):</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Returns the polarity of a tweet using the VADER sentiment analyzer from NLTK.</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Parameters</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co">    ----------</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co">    row : pd.Series (to be applied on rows of pd.DataFrame) containing the text of a tweet."""</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    sia <span class="op">=</span> SentimentIntensityAnalyzer()</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    text <span class="op">=</span> row[<span class="st">'text'</span>]</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    polarity <span class="op">=</span> sia.polarity_scores(text)</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    neg <span class="op">=</span> polarity[<span class="st">'neg'</span>]</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    neu <span class="op">=</span> polarity[<span class="st">'neu'</span>]</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    pos <span class="op">=</span> polarity[<span class="st">'pos'</span>]</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    compound <span class="op">=</span> polarity[<span class="st">'compound'</span>]</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> neg, neu, pos, compound</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> return_xy(data):</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Add new features including polarity scores</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Binary feature for whether a tweet contains a link</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    data[<span class="st">'links_f'</span>] <span class="op">=</span> data[<span class="st">'text'</span>].<span class="bu">apply</span>(link_count).astype(np.int8)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    data[<span class="st">'tweet_len'</span>] <span class="op">=</span> data[<span class="st">'text'</span>].<span class="bu">str</span>.<span class="bu">len</span>()</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    data[<span class="st">'word_count'</span>] <span class="op">=</span> data[<span class="st">'text'</span>].<span class="bu">str</span>.split().<span class="bu">str</span>.<span class="bu">len</span>()</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    data[<span class="st">'word_density'</span>] <span class="op">=</span> data[<span class="st">'tweet_len'</span>] <span class="op">/</span> (data[<span class="st">'word_count'</span>])</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Get polarity scores</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">'Getting polarity scores...'</span>)</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    data[<span class="st">'neg'</span>], data[<span class="st">'neu'</span>], data[<span class="st">'pos'</span>], data[<span class="st">'compound_f'</span>] <span class="op">=</span> <span class="bu">zip</span>(<span class="op">*</span>data.<span class="bu">apply</span>(get_polarity, axis<span class="op">=</span><span class="dv">1</span>))</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Convert dtypes to save memory</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    <span class="co">#data['target'] = data['target'].astype('bool')</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    data <span class="op">=</span> dtype_convert(data)</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Columns for X and y</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>    X <span class="op">=</span> data.drop(<span class="st">'target'</span>, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> data[<span class="st">'target'</span>].astype(<span class="st">'int8'</span>)</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> X, y</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> return_vectorized_data(train : pd.DataFrame, test : pd.DataFrame, text : <span class="bu">list</span>, features : <span class="bu">list</span>,</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                           max_features<span class="op">=</span><span class="va">None</span>, stop_words<span class="op">=</span><span class="va">None</span>):</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Returns vectorized data for training and testing.</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co">    Parameters</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co">    ----------</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co">    train : pd.DataFrame containing training data.</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co">    test : pd.DataFrame containing testing data.</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co">    text : str indicating the column name of the text data.</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="co">    features : list of str indicating the column names of the numeric features.</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="co">    max_features : int indicating the maximum number of features to be used in the vectorizer.</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="co">    stop_words : list of str indicating the stop words to be used in the vectorizer.</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    tk <span class="op">=</span> TweetTokenizer(preserve_case<span class="op">=</span><span class="va">False</span>, strip_handles<span class="op">=</span><span class="va">True</span>, reduce_len<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>    vectorizer <span class="op">=</span> TfidfVectorizer(tokenizer<span class="op">=</span>tk.tokenize, strip_accents<span class="op">=</span><span class="st">'unicode'</span>, max_features<span class="op">=</span>max_features, stop_words<span class="op">=</span>stop_words)</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>    v_train <span class="op">=</span> vectorizer.fit_transform(train[text])</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>    v_test <span class="op">=</span> vectorizer.transform(test[text])</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>    v_train <span class="op">=</span> pd.DataFrame(v_train.toarray(), columns<span class="op">=</span>vectorizer.get_feature_names_out(), index<span class="op">=</span>train.index)</span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>    v_test <span class="op">=</span> pd.DataFrame(v_test.toarray(), columns<span class="op">=</span>vectorizer.get_feature_names_out(), index<span class="op">=</span>test.index)</span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>    v_train <span class="op">=</span> v_train[v_train.columns].astype(np.float32)</span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>    v_test <span class="op">=</span> v_test[v_test.columns].astype(np.float32)</span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>    v_train <span class="op">=</span> v_train.join(train[features], how<span class="op">=</span><span class="st">'left'</span>, lsuffix<span class="op">=</span><span class="st">'_v'</span>, rsuffix<span class="op">=</span><span class="st">'_f'</span>)</span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>    v_test <span class="op">=</span> v_test.join(test[features], how<span class="op">=</span><span class="st">'left'</span>, lsuffix<span class="op">=</span><span class="st">'_v'</span>, rsuffix<span class="op">=</span><span class="st">'_f'</span>)</span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> v_train, v_test</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_history(history):</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Plots the training and validation loss and accuracy for a model.</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Parameters</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co">    ----------</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co">    history : Keras history object.</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    fig, ax <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">11</span>, <span class="dv">11</span>))</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    auc_best <span class="op">=</span> np.<span class="bu">max</span>(history.history[<span class="st">'val_auc'</span>])</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    auc_best_epoch <span class="op">=</span> np.argmax(history.history[<span class="st">'val_auc'</span>])</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    auc_max <span class="op">=</span> history.history[<span class="st">'auc'</span>][auc_best_epoch]</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>    ax[<span class="dv">0</span>].plot(history.history[<span class="st">'auc'</span>], label<span class="op">=</span><span class="st">'Train'</span>)</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>    ax[<span class="dv">0</span>].plot(history.history[<span class="st">'val_auc'</span>], label<span class="op">=</span><span class="st">'Validation'</span>)</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>    ax[<span class="dv">0</span>].vlines(auc_best_epoch, <span class="dv">0</span>, np.<span class="bu">max</span>(history.history[<span class="st">'val_auc'</span>]), color<span class="op">=</span><span class="st">'purple'</span>, linestyles<span class="op">=</span><span class="st">'dashed'</span>, label<span class="op">=</span><span class="st">'Best Epoch'</span>)</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>    ax[<span class="dv">0</span>].annotate(<span class="ss">f'</span><span class="sc">{</span>auc_best <span class="op">-</span> np<span class="sc">.</span><span class="bu">max</span>(history.history[<span class="st">"auc"</span>])<span class="sc">:.4f}</span><span class="ss">'</span>,</span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>                    xy<span class="op">=</span>(auc_best_epoch, auc_max),</span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>                    xytext<span class="op">=</span>(auc_best_epoch, auc_best<span class="op">-</span><span class="fl">0.05</span>),</span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>                    arrowprops<span class="op">=</span><span class="bu">dict</span>(facecolor<span class="op">=</span><span class="st">'black'</span>, shrink<span class="op">=</span><span class="fl">0.05</span>, width<span class="op">=</span><span class="fl">0.7</span>, headwidth<span class="op">=</span><span class="dv">5</span>))</span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>    ax[<span class="dv">0</span>].set_ylabel(<span class="st">'AUC'</span>)</span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>    <span class="co">#ax[0].set_title('AUC vs. Epoch')</span></span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>    ax[<span class="dv">0</span>].legend(loc<span class="op">=</span><span class="st">'lower left'</span>)</span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>    loss_best <span class="op">=</span> np.<span class="bu">min</span>(history.history[<span class="st">'val_loss'</span>])</span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>    loss_best_epoch <span class="op">=</span> np.argmin(history.history[<span class="st">'val_loss'</span>])</span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a>    loss_max <span class="op">=</span> history.history[<span class="st">'loss'</span>][loss_best_epoch]</span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a>    ax[<span class="dv">1</span>].plot(history.history[<span class="st">'loss'</span>], label<span class="op">=</span><span class="st">'Train'</span>)</span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a>    ax[<span class="dv">1</span>].plot(history.history[<span class="st">'val_loss'</span>], label<span class="op">=</span><span class="st">'Validation'</span>)</span>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a>    ax[<span class="dv">1</span>].vlines(loss_best_epoch, <span class="dv">0</span>, loss_best, color<span class="op">=</span><span class="st">'purple'</span>, linestyles<span class="op">=</span><span class="st">'dashed'</span>, label<span class="op">=</span><span class="st">'Best Epoch'</span>)</span>
+<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a>    ax[<span class="dv">1</span>].annotate(<span class="ss">f'</span><span class="sc">{</span>loss_best <span class="op">-</span> np<span class="sc">.</span><span class="bu">min</span>(history.history[<span class="st">"loss"</span>])<span class="sc">:.4f}</span><span class="ss">'</span>,</span>
+<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a>                    xy<span class="op">=</span>(loss_best_epoch, loss_max),</span>
+<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a>                    xytext<span class="op">=</span>(loss_best_epoch, loss_best<span class="op">+</span><span class="fl">.01</span>),</span>
+<span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a>                    arrowprops<span class="op">=</span><span class="bu">dict</span>(facecolor<span class="op">=</span><span class="st">'black'</span>, shrink<span class="op">=</span><span class="dv">0</span>, width<span class="op">=</span><span class="fl">0.7</span>, headwidth<span class="op">=</span><span class="dv">5</span>))</span>
+<span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-42"><a href="#cb12-42" aria-hidden="true" tabindex="-1"></a>    ax[<span class="dv">1</span>].set_xlabel(<span class="st">'Epoch'</span>)</span>
+<span id="cb12-43"><a href="#cb12-43" aria-hidden="true" tabindex="-1"></a>    ax[<span class="dv">1</span>].set_ylabel(<span class="st">'Loss'</span>)</span>
+<span id="cb12-44"><a href="#cb12-44" aria-hidden="true" tabindex="-1"></a>    <span class="co">#ax[1].set_title('Loss vs. Epoch')</span></span>
+<span id="cb12-45"><a href="#cb12-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-46"><a href="#cb12-46" aria-hidden="true" tabindex="-1"></a>    ax[<span class="dv">1</span>].legend(loc<span class="op">=</span><span class="st">'lower left'</span>)</span>
+<span id="cb12-47"><a href="#cb12-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-48"><a href="#cb12-48" aria-hidden="true" tabindex="-1"></a>    plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_roc(X_train, X_test, y_train, y_test, model):</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Plots the ROC AUC curve for a model.</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Parameters</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co">    ----------</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co">    X_train : pd.DataFrame or numpy array containing the training data.</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co">    X_test : pd.DataFrame or numpy array containing the testing data.</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="co">    y_train : pd.Series or numpy array containing the training target.</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="co">    y_test : pd.Series or numpy array containing the testing target.</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co">    model : Keras model.</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    fpr_train, tpr_train, thresholds_train <span class="op">=</span> roc_curve(y_train, model.predict(X_train))</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>    fpr_test, tpr_test, thresholds_test <span class="op">=</span> roc_curve(y_test, model.predict(X_test))</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Set figure size</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">10</span>))</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>    plt.plot(fpr_train, tpr_train, label<span class="op">=</span><span class="st">'Train'</span>)</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>    plt.plot(fpr_test, tpr_test, label<span class="op">=</span><span class="st">'Test'</span>)</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>    plt.legend([<span class="st">'Train'</span>, <span class="st">'Test'</span>], loc<span class="op">=</span><span class="st">'upper left'</span>)</span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>    plt.xlabel(<span class="st">'False Positive Rate'</span>)</span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>    plt.ylabel(<span class="st">'True Positive Rate'</span>)</span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>    plt.title(<span class="st">'ROC AUC Curve'</span>)</span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>    plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="import-data" class="level3">
+<h3 class="anchored" data-anchor-id="import-data">Import Data</h3>
+<div class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>train_data <span class="op">=</span> pd.read_csv(<span class="st">'data/bonus_train_data-2.csv'</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>test_data <span class="op">=</span> pd.read_csv(<span class="st">'data/bonus_test_data-2.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="add-features" class="level3">
+<h3 class="anchored" data-anchor-id="add-features">Add Features</h3>
+<div class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>X_train, y_train <span class="op">=</span> return_xy(train_data)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>X_test, y_test <span class="op">=</span> return_xy(test_data)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>features <span class="op">=</span> [<span class="st">'tweet_len'</span>, <span class="st">'word_count'</span>, <span class="st">'word_density'</span>, <span class="st">'links_f'</span>, <span class="st">'neg'</span>, <span class="st">'neu'</span>, <span class="st">'pos'</span>, <span class="st">'compound_f'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Getting polarity scores...
+Getting polarity scores...</code></pre>
+</div>
+</div>
+</section>
+<section id="tokenize-and-vectorize-data" class="level3">
+<h3 class="anchored" data-anchor-id="tokenize-and-vectorize-data">Tokenize and Vectorize Data</h3>
+<div class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Runs the custom function to vectorize the data</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>X_train_v, X_test_v <span class="op">=</span> return_vectorized_data(X_train, X_test, <span class="st">'text'</span>, features<span class="op">=</span>features, max_features<span class="op">=</span><span class="va">None</span>, stop_words<span class="op">=</span>stop_words)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>X_train_v[features]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="15">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>tweet_len</th>
+      <th>word_count</th>
+      <th>word_density</th>
+      <th>links_f</th>
+      <th>neg</th>
+      <th>neu</th>
+      <th>pos</th>
+      <th>compound_f</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>140</td>
+      <td>18</td>
+      <td>7.777778</td>
+      <td>1</td>
+      <td>0.207</td>
+      <td>0.536</td>
+      <td>0.257</td>
+      <td>0.3182</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>98</td>
+      <td>15</td>
+      <td>6.533333</td>
+      <td>0</td>
+      <td>0.205</td>
+      <td>0.795</td>
+      <td>0.000</td>
+      <td>-0.4767</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>143</td>
+      <td>22</td>
+      <td>6.500000</td>
+      <td>1</td>
+      <td>0.000</td>
+      <td>1.000</td>
+      <td>0.000</td>
+      <td>0.0000</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>118</td>
+      <td>17</td>
+      <td>6.941176</td>
+      <td>1</td>
+      <td>0.138</td>
+      <td>0.862</td>
+      <td>0.000</td>
+      <td>-0.3736</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>82</td>
+      <td>9</td>
+      <td>9.111111</td>
+      <td>0</td>
+      <td>0.000</td>
+      <td>1.000</td>
+      <td>0.000</td>
+      <td>0.0000</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>6085</th>
+      <td>96</td>
+      <td>16</td>
+      <td>6.000000</td>
+      <td>0</td>
+      <td>0.000</td>
+      <td>0.502</td>
+      <td>0.498</td>
+      <td>0.9169</td>
+    </tr>
+    <tr>
+      <th>6086</th>
+      <td>132</td>
+      <td>28</td>
+      <td>4.714286</td>
+      <td>0</td>
+      <td>0.276</td>
+      <td>0.724</td>
+      <td>0.000</td>
+      <td>-0.8126</td>
+    </tr>
+    <tr>
+      <th>6087</th>
+      <td>121</td>
+      <td>13</td>
+      <td>9.307693</td>
+      <td>1</td>
+      <td>0.155</td>
+      <td>0.845</td>
+      <td>0.000</td>
+      <td>-0.2960</td>
+    </tr>
+    <tr>
+      <th>6088</th>
+      <td>136</td>
+      <td>20</td>
+      <td>6.800000</td>
+      <td>1</td>
+      <td>0.000</td>
+      <td>1.000</td>
+      <td>0.000</td>
+      <td>0.0000</td>
+    </tr>
+    <tr>
+      <th>6089</th>
+      <td>101</td>
+      <td>17</td>
+      <td>5.941176</td>
+      <td>1</td>
+      <td>0.000</td>
+      <td>1.000</td>
+      <td>0.000</td>
+      <td>0.0000</td>
+    </tr>
+  </tbody>
+</table>
+<p>6090 rows × 8 columns</p>
+</div>
+</div>
+</div>
+</section>
+<section id="scale-data" class="level3">
+<h3 class="anchored" data-anchor-id="scale-data">Scale Data</h3>
+<div class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># import sklearn standard scaler</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>X_train_f <span class="op">=</span> X_train_v[features]</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>X_test_f <span class="op">=</span> X_test_v[features]</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="co"># instantiate the scaler</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>scaler <span class="op">=</span> StandardScaler()</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="co"># fit transform the training data</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>X_train_fs <span class="op">=</span> scaler.fit_transform(X_train_f)</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>X_test_fs <span class="op">=</span> scaler.transform(X_test_f)</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>X_train_fs <span class="op">=</span> pd.DataFrame(X_train_fs, columns<span class="op">=</span>features, index<span class="op">=</span>X_train_f.index)</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>X_test_fs <span class="op">=</span> pd.DataFrame(X_test_fs, columns<span class="op">=</span>features, index<span class="op">=</span>X_test_f.index)</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>X_train_v[features] <span class="op">=</span> X_train_fs[features]</span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>X_test_v[features] <span class="op">=</span> X_test_fs[features]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="train-model" class="level3">
+<h3 class="anchored" data-anchor-id="train-model">Train Model</h3>
+<p>First we convert the dataframes to numpy arrays to work with the keras api. I used the functional api to build the model. It has two hidden layers, a concatenated layer of the original input and previous hidden layers, and one more hidden layer before the output layer. I used the Adam optimizer and the binary crossentropy loss function. I also used the early stopping and checkpoint callbacks to save the best model. I used the fit method to train the model.</p>
+<div class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>train_text <span class="op">=</span> X_train_v.drop(features, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>test_text <span class="op">=</span> X_test_v.drop(features, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>train_feats <span class="op">=</span> X_train_v[features]</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>test_feats <span class="op">=</span> X_test_v[features]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>train_text_n <span class="op">=</span> train_text.to_numpy()</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>test_text_n <span class="op">=</span> test_text.to_numpy()</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>train_feats_n <span class="op">=</span> train_feats.to_numpy()</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>test_feats_n <span class="op">=</span> test_feats.to_numpy()</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>y_train_n <span class="op">=</span> y_train.to_numpy()</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>y_test_n <span class="op">=</span> y_test.to_numpy()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="31">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>tf.keras.backend.clear_session()</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>act1 <span class="op">=</span> tf.keras.layers.LeakyReLU(alpha<span class="op">=</span><span class="fl">0.05</span>)</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>text_input_ <span class="op">=</span> tf.keras.layers.Input(shape<span class="op">=</span>(train_text_n.shape[<span class="dv">1</span>],), name<span class="op">=</span><span class="st">'text_input'</span>)</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>text_layers <span class="op">=</span> tf.keras.layers.Dense(<span class="dv">32</span>, activation<span class="op">=</span>act1)(text_input_)</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="co">#text_layers = tf.keras.layers.Dropout(0.2)(text_layers)</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>feats_input_ <span class="op">=</span> tf.keras.layers.Input(shape<span class="op">=</span>(train_feats_n.shape[<span class="dv">1</span>],), name<span class="op">=</span><span class="st">'feats_input'</span>)</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>feats_layers <span class="op">=</span> tf.keras.layers.Dense(<span class="dv">32</span>, activation<span class="op">=</span>act1)(feats_input_)</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>feats_layers <span class="op">=</span> tf.keras.layers.Dropout(<span class="fl">0.1</span>)(feats_layers)</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>concat_l <span class="op">=</span> tf.keras.layers.Concatenate()([text_layers, feats_layers])</span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>concat_i <span class="op">=</span> tf.keras.layers.Concatenate()([text_input_, feats_input_])</span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>concat <span class="op">=</span> tf.keras.layers.Concatenate()([concat_l, concat_i])</span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a>concat <span class="op">=</span> tf.keras.layers.Dropout(<span class="fl">0.1</span>)(concat)</span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>output_ <span class="op">=</span> tf.keras.layers.Dense(<span class="dv">1</span>, activation<span class="op">=</span><span class="st">'sigmoid'</span>)(concat)</span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> tf.keras.Model(inputs<span class="op">=</span>[text_input_, feats_input_], outputs<span class="op">=</span>output_)</span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a>model.summary()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Model: "model"
+__________________________________________________________________________________________________
+ Layer (type)                   Output Shape         Param #     Connected to                     
+==================================================================================================
+ feats_input (InputLayer)       [(None, 8)]          0           []                               
+                                                                                                  
+ text_input (InputLayer)        [(None, 17781)]      0           []                               
+                                                                                                  
+ dense_1 (Dense)                (None, 32)           288         ['feats_input[0][0]']            
+                                                                                                  
+ dense (Dense)                  (None, 32)           569024      ['text_input[0][0]']             
+                                                                                                  
+ dropout (Dropout)              (None, 32)           0           ['dense_1[0][0]']                
+                                                                                                  
+ concatenate (Concatenate)      (None, 64)           0           ['dense[0][0]',                  
+                                                                  'dropout[0][0]']                
+                                                                                                  
+ concatenate_1 (Concatenate)    (None, 17789)        0           ['text_input[0][0]',             
+                                                                  'feats_input[0][0]']            
+                                                                                                  
+ concatenate_2 (Concatenate)    (None, 17853)        0           ['concatenate[0][0]',            
+                                                                  'concatenate_1[0][0]']          
+                                                                                                  
+ dropout_1 (Dropout)            (None, 17853)        0           ['concatenate_2[0][0]']          
+                                                                                                  
+ dense_2 (Dense)                (None, 1)            17854       ['dropout_1[0][0]']              
+                                                                                                  
+==================================================================================================
+Total params: 587,166
+Trainable params: 587,166
+Non-trainable params: 0
+__________________________________________________________________________________________________</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="32">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>opt <span class="op">=</span> tf.keras.optimizers.Adamax(learning_rate<span class="op">=</span><span class="fl">0.0003</span>)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>metric <span class="op">=</span> tf.keras.metrics.AUC()</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>model.<span class="bu">compile</span>(optimizer<span class="op">=</span>opt, loss<span class="op">=</span><span class="st">'binary_crossentropy'</span>, metrics<span class="op">=</span>metric)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="33">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> absl.logging</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>absl.logging.set_verbosity(absl.logging.ERROR)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>callbacks <span class="op">=</span> [tf.keras.callbacks.EarlyStopping(monitor<span class="op">=</span><span class="st">'val_auc'</span>, patience<span class="op">=</span><span class="dv">4</span>, mode<span class="op">=</span><span class="st">'max'</span>),</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>             tf.keras.callbacks.EarlyStopping(monitor<span class="op">=</span><span class="st">'val_loss'</span>, patience<span class="op">=</span><span class="dv">3</span>, mode<span class="op">=</span><span class="st">'min'</span>),</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>             tf.keras.callbacks.ModelCheckpoint(filepath<span class="op">=</span><span class="st">'checkpoint.hd5'</span>, monitor<span class="op">=</span><span class="st">'val_auc'</span>, save_best_only<span class="op">=</span><span class="va">True</span>, mode<span class="op">=</span><span class="st">'max'</span>)</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>             ]</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>model_results <span class="op">=</span> model.fit([train_text, train_feats], y_train_n, validation_split<span class="op">=</span><span class="fl">0.02</span>,</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>                          epochs<span class="op">=</span><span class="dv">100</span>, batch_size<span class="op">=</span><span class="dv">64</span>, callbacks<span class="op">=</span>callbacks,</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>                          use_multiprocessing<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Epoch 1/100
+94/94 [==============================] - ETA: 0s - loss: 0.6810 - auc: 0.6380WARNING:tensorflow:Detecting that an object or model or tf.train.Checkpoint is being deleted with unrestored values. See the following logs for the specific values in question. To silence these warnings, use `status.expect_partial()`. See https://www.tensorflow.org/api_docs/python/tf/train/Checkpoint#restorefor details about the status object returned by the restore function.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>WARNING:tensorflow:Detecting that an object or model or tf.train.Checkpoint is being deleted with unrestored values. See the following logs for the specific values in question. To silence these warnings, use `status.expect_partial()`. See https://www.tensorflow.org/api_docs/python/tf/train/Checkpoint#restorefor details about the status object returned by the restore function.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>WARNING:tensorflow:Value in checkpoint could not be found in the restored object: (root).keras_api.metrics.0.total</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>WARNING:tensorflow:Value in checkpoint could not be found in the restored object: (root).keras_api.metrics.0.total</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>WARNING:tensorflow:Value in checkpoint could not be found in the restored object: (root).keras_api.metrics.0.count</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>WARNING:tensorflow:Value in checkpoint could not be found in the restored object: (root).keras_api.metrics.0.count</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>WARNING:tensorflow:Value in checkpoint could not be found in the restored object: (root).keras_api.metrics.1.true_positives</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>WARNING:tensorflow:Value in checkpoint could not be found in the restored object: (root).keras_api.metrics.1.true_positives</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>WARNING:tensorflow:Value in checkpoint could not be found in the restored object: (root).keras_api.metrics.1.true_negatives</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>WARNING:tensorflow:Value in checkpoint could not be found in the restored object: (root).keras_api.metrics.1.true_negatives</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>WARNING:tensorflow:Value in checkpoint could not be found in the restored object: (root).keras_api.metrics.1.false_positives</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>WARNING:tensorflow:Value in checkpoint could not be found in the restored object: (root).keras_api.metrics.1.false_positives</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>WARNING:tensorflow:Value in checkpoint could not be found in the restored object: (root).keras_api.metrics.1.false_negatives</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>WARNING:tensorflow:Value in checkpoint could not be found in the restored object: (root).keras_api.metrics.1.false_negatives</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 6s 62ms/step - loss: 0.6810 - auc: 0.6380 - val_loss: 0.6689 - val_auc: 0.7194
+Epoch 2/100
+94/94 [==============================] - ETA: 0s - loss: 0.6648 - auc: 0.6938INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 53ms/step - loss: 0.6648 - auc: 0.6938 - val_loss: 0.6518 - val_auc: 0.7375
+Epoch 3/100
+94/94 [==============================] - ETA: 0s - loss: 0.6507 - auc: 0.7144INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 6s 62ms/step - loss: 0.6507 - auc: 0.7144 - val_loss: 0.6373 - val_auc: 0.7471
+Epoch 4/100
+94/94 [==============================] - ETA: 0s - loss: 0.6384 - auc: 0.7262INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 54ms/step - loss: 0.6384 - auc: 0.7262 - val_loss: 0.6247 - val_auc: 0.7533
+Epoch 5/100
+94/94 [==============================] - ETA: 0s - loss: 0.6270 - auc: 0.7351INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 53ms/step - loss: 0.6270 - auc: 0.7351 - val_loss: 0.6133 - val_auc: 0.7591
+Epoch 6/100
+94/94 [==============================] - ETA: 0s - loss: 0.6184 - auc: 0.7403INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 53ms/step - loss: 0.6184 - auc: 0.7403 - val_loss: 0.6036 - val_auc: 0.7644
+Epoch 7/100
+93/94 [============================&gt;.] - ETA: 0s - loss: 0.6095 - auc: 0.7484INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 54ms/step - loss: 0.6096 - auc: 0.7482 - val_loss: 0.5964 - val_auc: 0.7674
+Epoch 8/100
+94/94 [==============================] - ETA: 0s - loss: 0.6030 - auc: 0.7537INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 57ms/step - loss: 0.6030 - auc: 0.7537 - val_loss: 0.5890 - val_auc: 0.7726
+Epoch 9/100
+94/94 [==============================] - ETA: 0s - loss: 0.5949 - auc: 0.7618INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 50ms/step - loss: 0.5949 - auc: 0.7618 - val_loss: 0.5819 - val_auc: 0.7769
+Epoch 10/100
+93/94 [============================&gt;.] - ETA: 0s - loss: 0.5877 - auc: 0.7691INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 51ms/step - loss: 0.5878 - auc: 0.7689 - val_loss: 0.5755 - val_auc: 0.7815
+Epoch 11/100
+93/94 [============================&gt;.] - ETA: 0s - loss: 0.5813 - auc: 0.7759INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 56ms/step - loss: 0.5809 - auc: 0.7763 - val_loss: 0.5692 - val_auc: 0.7864
+Epoch 12/100
+94/94 [==============================] - ETA: 0s - loss: 0.5736 - auc: 0.7841INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 52ms/step - loss: 0.5736 - auc: 0.7841 - val_loss: 0.5631 - val_auc: 0.7933
+Epoch 13/100
+94/94 [==============================] - ETA: 0s - loss: 0.5668 - auc: 0.7900INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 56ms/step - loss: 0.5668 - auc: 0.7900 - val_loss: 0.5573 - val_auc: 0.7985
+Epoch 14/100
+94/94 [==============================] - ETA: 0s - loss: 0.5586 - auc: 0.8002INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 51ms/step - loss: 0.5586 - auc: 0.8002 - val_loss: 0.5519 - val_auc: 0.8027
+Epoch 15/100
+94/94 [==============================] - ETA: 0s - loss: 0.5521 - auc: 0.8063INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 52ms/step - loss: 0.5521 - auc: 0.8063 - val_loss: 0.5463 - val_auc: 0.8057
+Epoch 16/100
+94/94 [==============================] - ETA: 0s - loss: 0.5435 - auc: 0.8155INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 51ms/step - loss: 0.5435 - auc: 0.8155 - val_loss: 0.5410 - val_auc: 0.8100
+Epoch 17/100
+94/94 [==============================] - ETA: 0s - loss: 0.5365 - auc: 0.8215INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 50ms/step - loss: 0.5365 - auc: 0.8215 - val_loss: 0.5358 - val_auc: 0.8153
+Epoch 18/100
+93/94 [============================&gt;.] - ETA: 0s - loss: 0.5297 - auc: 0.8292INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 50ms/step - loss: 0.5296 - auc: 0.8293 - val_loss: 0.5306 - val_auc: 0.8203
+Epoch 19/100
+94/94 [==============================] - ETA: 0s - loss: 0.5220 - auc: 0.8372INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 52ms/step - loss: 0.5220 - auc: 0.8372 - val_loss: 0.5259 - val_auc: 0.8244
+Epoch 20/100
+94/94 [==============================] - ETA: 0s - loss: 0.5129 - auc: 0.8460INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 54ms/step - loss: 0.5129 - auc: 0.8460 - val_loss: 0.5210 - val_auc: 0.8288
+Epoch 21/100
+93/94 [============================&gt;.] - ETA: 0s - loss: 0.5063 - auc: 0.8524INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 52ms/step - loss: 0.5062 - auc: 0.8525 - val_loss: 0.5168 - val_auc: 0.8313
+Epoch 22/100
+94/94 [==============================] - ETA: 0s - loss: 0.4981 - auc: 0.8606INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 55ms/step - loss: 0.4981 - auc: 0.8606 - val_loss: 0.5122 - val_auc: 0.8350
+Epoch 23/100
+94/94 [==============================] - ETA: 0s - loss: 0.4925 - auc: 0.8650INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 56ms/step - loss: 0.4925 - auc: 0.8650 - val_loss: 0.5079 - val_auc: 0.8392
+Epoch 24/100
+93/94 [============================&gt;.] - ETA: 0s - loss: 0.4836 - auc: 0.8727INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 52ms/step - loss: 0.4836 - auc: 0.8727 - val_loss: 0.5034 - val_auc: 0.8432
+Epoch 25/100
+94/94 [==============================] - ETA: 0s - loss: 0.4751 - auc: 0.8802INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 54ms/step - loss: 0.4751 - auc: 0.8802 - val_loss: 0.4988 - val_auc: 0.8456
+Epoch 26/100
+94/94 [==============================] - ETA: 0s - loss: 0.4688 - auc: 0.8844INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 54ms/step - loss: 0.4688 - auc: 0.8844 - val_loss: 0.4940 - val_auc: 0.8486
+Epoch 27/100
+94/94 [==============================] - ETA: 0s - loss: 0.4604 - auc: 0.8905INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 53ms/step - loss: 0.4604 - auc: 0.8905 - val_loss: 0.4900 - val_auc: 0.8512
+Epoch 28/100
+94/94 [==============================] - ETA: 0s - loss: 0.4525 - auc: 0.8967INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 54ms/step - loss: 0.4525 - auc: 0.8967 - val_loss: 0.4857 - val_auc: 0.8558
+Epoch 29/100
+94/94 [==============================] - ETA: 0s - loss: 0.4445 - auc: 0.9021INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 52ms/step - loss: 0.4445 - auc: 0.9021 - val_loss: 0.4817 - val_auc: 0.8577
+Epoch 30/100
+94/94 [==============================] - ETA: 0s - loss: 0.4377 - auc: 0.9059INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 56ms/step - loss: 0.4377 - auc: 0.9059 - val_loss: 0.4774 - val_auc: 0.8584
+Epoch 31/100
+94/94 [==============================] - ETA: 0s - loss: 0.4297 - auc: 0.9114INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 54ms/step - loss: 0.4297 - auc: 0.9114 - val_loss: 0.4734 - val_auc: 0.8603
+Epoch 32/100
+94/94 [==============================] - ETA: 0s - loss: 0.4219 - auc: 0.9162INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 55ms/step - loss: 0.4219 - auc: 0.9162 - val_loss: 0.4692 - val_auc: 0.8610
+Epoch 33/100
+94/94 [==============================] - ETA: 0s - loss: 0.4148 - auc: 0.9199INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 55ms/step - loss: 0.4148 - auc: 0.9199 - val_loss: 0.4651 - val_auc: 0.8622
+Epoch 34/100
+94/94 [==============================] - ETA: 0s - loss: 0.4059 - auc: 0.9245INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 54ms/step - loss: 0.4059 - auc: 0.9245 - val_loss: 0.4612 - val_auc: 0.8638
+Epoch 35/100
+94/94 [==============================] - ETA: 0s - loss: 0.3997 - auc: 0.9284INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 53ms/step - loss: 0.3997 - auc: 0.9284 - val_loss: 0.4576 - val_auc: 0.8652
+Epoch 36/100
+94/94 [==============================] - ETA: 0s - loss: 0.3924 - auc: 0.9314INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 54ms/step - loss: 0.3924 - auc: 0.9314 - val_loss: 0.4539 - val_auc: 0.8675
+Epoch 37/100
+93/94 [============================&gt;.] - ETA: 0s - loss: 0.3850 - auc: 0.9346INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 53ms/step - loss: 0.3852 - auc: 0.9346 - val_loss: 0.4506 - val_auc: 0.8693
+Epoch 38/100
+93/94 [============================&gt;.] - ETA: 0s - loss: 0.3794 - auc: 0.9370INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 57ms/step - loss: 0.3791 - auc: 0.9372 - val_loss: 0.4475 - val_auc: 0.8704
+Epoch 39/100
+94/94 [==============================] - ETA: 0s - loss: 0.3722 - auc: 0.9406INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 54ms/step - loss: 0.3722 - auc: 0.9406 - val_loss: 0.4440 - val_auc: 0.8726
+Epoch 40/100
+94/94 [==============================] - ETA: 0s - loss: 0.3652 - auc: 0.9434INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 52ms/step - loss: 0.3652 - auc: 0.9434 - val_loss: 0.4410 - val_auc: 0.8738
+Epoch 41/100
+94/94 [==============================] - ETA: 0s - loss: 0.3596 - auc: 0.9452INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 52ms/step - loss: 0.3596 - auc: 0.9452 - val_loss: 0.4380 - val_auc: 0.8769
+Epoch 42/100
+93/94 [============================&gt;.] - ETA: 0s - loss: 0.3525 - auc: 0.9480INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 54ms/step - loss: 0.3522 - auc: 0.9481 - val_loss: 0.4351 - val_auc: 0.8785
+Epoch 43/100
+93/94 [============================&gt;.] - ETA: 0s - loss: 0.3456 - auc: 0.9509INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 53ms/step - loss: 0.3457 - auc: 0.9509 - val_loss: 0.4325 - val_auc: 0.8789
+Epoch 44/100
+94/94 [==============================] - ETA: 0s - loss: 0.3399 - auc: 0.9521INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 57ms/step - loss: 0.3399 - auc: 0.9521 - val_loss: 0.4301 - val_auc: 0.8798
+Epoch 45/100
+94/94 [==============================] - ETA: 0s - loss: 0.3344 - auc: 0.9542INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 50ms/step - loss: 0.3344 - auc: 0.9542 - val_loss: 0.4274 - val_auc: 0.8820
+Epoch 46/100
+94/94 [==============================] - 4s 41ms/step - loss: 0.3291 - auc: 0.9553 - val_loss: 0.4250 - val_auc: 0.8816
+Epoch 47/100
+93/94 [============================&gt;.] - ETA: 0s - loss: 0.3229 - auc: 0.9580INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 54ms/step - loss: 0.3227 - auc: 0.9581 - val_loss: 0.4229 - val_auc: 0.8827
+Epoch 48/100
+94/94 [==============================] - ETA: 0s - loss: 0.3187 - auc: 0.9588INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 51ms/step - loss: 0.3187 - auc: 0.9588 - val_loss: 0.4208 - val_auc: 0.8835
+Epoch 49/100
+94/94 [==============================] - ETA: 0s - loss: 0.3125 - auc: 0.9610INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 54ms/step - loss: 0.3125 - auc: 0.9610 - val_loss: 0.4188 - val_auc: 0.8845
+Epoch 50/100
+94/94 [==============================] - 4s 44ms/step - loss: 0.3074 - auc: 0.9619 - val_loss: 0.4167 - val_auc: 0.8834
+Epoch 51/100
+94/94 [==============================] - 4s 40ms/step - loss: 0.3024 - auc: 0.9634 - val_loss: 0.4150 - val_auc: 0.8843
+Epoch 52/100
+94/94 [==============================] - ETA: 0s - loss: 0.2978 - auc: 0.9645INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 48ms/step - loss: 0.2978 - auc: 0.9645 - val_loss: 0.4132 - val_auc: 0.8846
+Epoch 53/100
+94/94 [==============================] - ETA: 0s - loss: 0.2929 - auc: 0.9663INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 52ms/step - loss: 0.2929 - auc: 0.9663 - val_loss: 0.4114 - val_auc: 0.8852
+Epoch 54/100
+94/94 [==============================] - ETA: 0s - loss: 0.2885 - auc: 0.9669INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 5s 52ms/step - loss: 0.2885 - auc: 0.9669 - val_loss: 0.4099 - val_auc: 0.8856
+Epoch 55/100
+93/94 [============================&gt;.] - ETA: 0s - loss: 0.2846 - auc: 0.9680INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 4s 48ms/step - loss: 0.2843 - auc: 0.9681 - val_loss: 0.4082 - val_auc: 0.8860
+Epoch 56/100
+94/94 [==============================] - 4s 43ms/step - loss: 0.2788 - auc: 0.9698 - val_loss: 0.4067 - val_auc: 0.8850
+Epoch 57/100
+94/94 [==============================] - 4s 43ms/step - loss: 0.2757 - auc: 0.9701 - val_loss: 0.4053 - val_auc: 0.8854
+Epoch 58/100
+94/94 [==============================] - 4s 42ms/step - loss: 0.2695 - auc: 0.9721 - val_loss: 0.4038 - val_auc: 0.8857
+Epoch 59/100
+94/94 [==============================] - 4s 42ms/step - loss: 0.2668 - auc: 0.9727 - val_loss: 0.4029 - val_auc: 0.8856</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="34">
+<div class="sourceCode cell-code" id="cb146"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb146-1"><a href="#cb146-1" aria-hidden="true" tabindex="-1"></a>plot_history(model_results)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="nlp_ann_files/figure-html/cell-24-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Above is a plot of the training and validation accuracy and loss. The model seems to be overfitting more as the epochs increase, and we can see the best epoch for loss is around 6, where the best epoch for accuracy is around 7. This indicates that the model may be overfitting and we should stop training the model at around 6 epochs or 7 epochs. However, the model may also be improved by changing the optimizer, learning rate, adding more layers or the amount of training data avaliable.</p>
+</section>
+<section id="evaluate-model" class="level3">
+<h3 class="anchored" data-anchor-id="evaluate-model">Evaluate Model</h3>
+<div class="cell" data-execution_count="35">
+<div class="sourceCode cell-code" id="cb147"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb147-1"><a href="#cb147-1" aria-hidden="true" tabindex="-1"></a>model.load_weights(<span class="st">'checkpoint.hd5'</span>)</span>
+<span id="cb147-2"><a href="#cb147-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb147-3"><a href="#cb147-3" aria-hidden="true" tabindex="-1"></a>model.evaluate([test_text, test_feats], y_test_n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>48/48 [==============================] - 2s 47ms/step - loss: 0.4407 - auc: 0.8647</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="35">
+<pre><code>[0.4406600296497345, 0.8646914958953857]</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="36">
+<div class="sourceCode cell-code" id="cb150"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb150-1"><a href="#cb150-1" aria-hidden="true" tabindex="-1"></a>plot_roc([train_text, train_feats], [test_text, test_feats], y_train_n, y_test_n, model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>191/191 [==============================] - 9s 49ms/step
+48/48 [==============================] - 2s 49ms/step</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="nlp_ann_files/figure-html/cell-26-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Above we see the results for our test data set. The model has an AUC of .865, which is not bad. However, from the ROC AUC plot above we can see that the model is still overfitting to the training data and is not generalizing to the test data as well as it could. This could be due to many factors, such as the amount or accuracy of training data, the amount of features, the model architecture, the learning rate, and the amount of epochs. However, the model is still able to predict wheather or not a tweet is about a real disaster with a decent accuracy.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

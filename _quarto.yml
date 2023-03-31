@@ -16,8 +16,8 @@ website:
         menu:
           - href: https://www.linkedin.com/in/aaron-m-gaines/
             text: LinkedIn
-
-
+          - href: https://github.com/aarongaines
+            text: GitHub
 format:
   html:
     theme: spacelab

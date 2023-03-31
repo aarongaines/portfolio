@@ -16,5 +16,8 @@
   },
   "projects/nlp_ann.ipynb": {
     "nlp_ann.html": "0d7727a6"
+  },
+  "arcpy_example.ipynb": {
+    "arcpy_example.html": "57633fe9"
   }
 }

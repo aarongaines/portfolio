@@ -208,7 +208,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <section id="introduction" class="level3">
 <h3 class="anchored" data-anchor-id="introduction">Introduction</h3>
 <p>In this notebook, I will be building a model to predict whether or not a tweet is about a real disaster, using the data given for the assignment. The data has been provided in separate training and test sets, so only the training set will be used in the model training/validation while the test set will be saved for the end to evalute the model.</p>
-<p>First the data will be loaded and explored, then the data will be cleaned and preprocessed, and finally the model will be built and trained. I decided to add some features to the data set (e.g.&nbsp;number of words in a tweet) to see if they would improve the model’s performance. I also used the prebuild sentiment analysis model from the NLTK library to see if it would improve the model’s performance. Finally I used the sklearn library to vectorize the text data with the TF-IDF vectorizer and the nltk tweet tokenizer to tokenize the text data. After all of this, I used the tensorflow.keras library to build and train the model.</p>
+<p>First the data will be loaded and explored, then the data will be cleaned and preprocessed, and finally the model will be built and trained. I decided to add some features to the data set (e.g.&nbsp;number of words in a tweet) to see if they would improve the model’s performance. I also used the prebuild sentiment analysis model from the NLTK library to see if it would improve the model’s performance. Finally I used the sklearn library to vectorize the text data with the TF-IDF vectorizer and the nltk tweet tokenizer to tokenize the text data. After all of this, I used the tensorflow.keras library to build and train the neural network. The metrics used to evaluate the model were the accuracy score and receiver operating characteristic (ROC) curve.</p>
 </section>
 <section id="import-libraries" class="level3">
 <h3 class="anchored" data-anchor-id="import-libraries">Import Libraries</h3>
@@ -250,13 +250,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <section id="custom-functions" class="level3">
 <h3 class="anchored" data-anchor-id="custom-functions">Custom Functions</h3>
 <ol type="1">
-<li><em>dtype_convert</em>: converts the data type of a column in a dataframe</li>
-<li><em>link_count</em>: if a link exists in a tweet</li>
-<li><em>get_polarity</em>: returns the polarity of a tweet using the NLTK sentiment analysis model</li>
-<li><em>return_xy</em>: returns the x and y data from a dataframe</li>
-<li><em>return_vectorized_data</em>: returns the vectorized text and extra features from a dataframe</li>
-<li><em>plot_history</em>: plots the training and validation accuracy and loss from a history object</li>
-<li><em>plot_roc</em>: plots the ROC curve using the best saved model and the test data</li>
+<li><p><em>dtype_convert</em>: converts the data type of a column in a dataframe</p></li>
+<li><p><em>link_count</em>: if a link exists in a tweet</p></li>
+<li><p><em>get_polarity</em>: returns the polarity of a tweet using the NLTK sentiment analysis model</p></li>
+<li><p><em>return_xy</em>: returns the x and y data from a dataframe</p></li>
+<li><p><em>return_vectorized_data</em>: returns the vectorized text and extra features from a dataframe</p></li>
+<li><p><em>plot_history</em>: plots the training and validation accuracy and loss from a history object</p></li>
+<li><p><em>plot_roc</em>: plots the ROC curve using the best saved model and the test data</p></li>
 </ol>
 <div class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> dtype_convert(data : pd.DataFrame):</span>
@@ -485,17 +485,150 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <section id="import-data" class="level3">
 <h3 class="anchored" data-anchor-id="import-data">Import Data</h3>
 <div class="cell" data-execution_count="12">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>train_data <span class="op">=</span> pd.read_csv(<span class="st">'data/bonus_train_data-2.csv'</span>)</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>test_data <span class="op">=</span> pd.read_csv(<span class="st">'data/bonus_test_data-2.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>train_data <span class="op">=</span> pd.read_csv(<span class="st">'projects/data/bonus_train_data-2.csv'</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>test_data <span class="op">=</span> pd.read_csv(<span class="st">'projects/data/bonus_test_data-2.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now that the data has been loaded, I will explore it to get an idea of what I am working with. It is important to make sure that the data is clean and that there are no missing values. I will then print some random samples from the data to get an idea of what the tweets look like. We may see some instances where the target is 1 (real disaster) but the tweet is not about a real disaster. This is important to keep in mind when training the model that we might be limited by the quality of the data.</p>
+<div class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>train_data.info()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;class 'pandas.core.frame.DataFrame'&gt;
+RangeIndex: 6090 entries, 0 to 6089
+Data columns (total 2 columns):
+ #   Column  Non-Null Count  Dtype 
+---  ------  --------------  ----- 
+ 0   text    6090 non-null   object
+ 1   target  6090 non-null   int64 
+dtypes: int64(1), object(1)
+memory usage: 95.3+ KB</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>train_data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="14">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>text</th>
+      <th>target</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Courageous and honest analysis of need to use ...</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>@ZachZaidman @670TheScore wld b a shame if tha...</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Tell @BarackObama to rescind medals of 'honor'...</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Worried about how the CA drought might affect ...</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>@YoungHeroesID Lava Blast &amp;amp; Power Red #Pan...</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>6085</th>
+      <td>@Eganator2000 There aren't many Obliteration s...</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>6086</th>
+      <td>just had a panic attack bc I don't have enough...</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>6087</th>
+      <td>Omron HEM-712C Automatic Blood Pressure Monito...</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>6088</th>
+      <td>Officials say a quarantine is in place at an A...</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>6089</th>
+      <td>I moved to England five years ago today. What ...</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+<p>6090 rows × 2 columns</p>
+</div>
+</div>
+</div>
+<div class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">9</span>):</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    rand <span class="op">=</span> np.random.randint(<span class="dv">0</span>, <span class="bu">len</span>(train_data)<span class="op">-</span><span class="dv">1</span>)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    text <span class="op">=</span> train_data.loc[rand, <span class="st">'text'</span>]</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    target <span class="op">=</span> train_data.loc[rand, <span class="st">'target'</span>]</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'Index: </span><span class="sc">{</span>rand<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'Target: </span><span class="sc">{</span>target<span class="sc">}</span><span class="ch">\n</span><span class="sc">{</span>text<span class="sc">}</span><span class="ch">\n</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Index: 3895
+Target: 0
+@MistressPip I'm amazed you have not been inundated mistress.
+
+Index: 5303
+Target: 1
+New York City Outbreak: What Is Legionnaire's Disease?   http://t.co/CXI82rFiFS
+
+Index: 1459
+Target: 0
+I feel like death
+
+Index: 5454
+Target: 1
+#ABCNews Obama Declares Disaster for Typhoon-Devastated Saipan: Obama signs disaster declaration for No... http://t.co/DOBZc3piTM #World
+
+Index: 942
+Target: 0
+Enugu Government to demolish illegal structures at International Conference Centre: Enugu State government app... http://t.co/MsKn6D3eKH
+
+Index: 2843
+Target: 0
+People really still be having curfew even when they're 18 &amp;amp; graduated high school ??
+
+Index: 1114
+Target: 1
+Severe Thunderstorm Warning including Russellville AR Clarksville AR Dardanelle AR until 10:15 PM CDT http://t.co/n844h1ASPj
+
+Index: 3884
+Target: 1
+A look at state actions a year after Ferguson's upheaval http://t.co/vXUFtVT9AU
+</code></pre>
+</div>
 </div>
 </section>
 <section id="add-features" class="level3">
 <h3 class="anchored" data-anchor-id="add-features">Add Features</h3>
-<div class="cell" data-execution_count="13">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>X_train, y_train <span class="op">=</span> return_xy(train_data)</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>X_test, y_test <span class="op">=</span> return_xy(test_data)</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>features <span class="op">=</span> [<span class="st">'tweet_len'</span>, <span class="st">'word_count'</span>, <span class="st">'word_density'</span>, <span class="st">'links_f'</span>, <span class="st">'neg'</span>, <span class="st">'neu'</span>, <span class="st">'pos'</span>, <span class="st">'compound_f'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>X_train, y_train <span class="op">=</span> return_xy(train_data)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>X_test, y_test <span class="op">=</span> return_xy(test_data)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>features <span class="op">=</span> [<span class="st">'tweet_len'</span>, <span class="st">'word_count'</span>, <span class="st">'word_density'</span>, <span class="st">'links_f'</span>, <span class="st">'neg'</span>, <span class="st">'neu'</span>, <span class="st">'pos'</span>, <span class="st">'compound_f'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Getting polarity scores...
 Getting polarity scores...</code></pre>
@@ -504,13 +637,13 @@ Getting polarity scores...</code></pre>
 </section>
 <section id="tokenize-and-vectorize-data" class="level3">
 <h3 class="anchored" data-anchor-id="tokenize-and-vectorize-data">Tokenize and Vectorize Data</h3>
-<div class="cell" data-execution_count="14">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Runs the custom function to vectorize the data</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>X_train_v, X_test_v <span class="op">=</span> return_vectorized_data(X_train, X_test, <span class="st">'text'</span>, features<span class="op">=</span>features, max_features<span class="op">=</span><span class="va">None</span>, stop_words<span class="op">=</span>stop_words)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Runs the custom function to vectorize the data</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>X_train_v, X_test_v <span class="op">=</span> return_vectorized_data(X_train, X_test, <span class="st">'text'</span>, features<span class="op">=</span>features, max_features<span class="op">=</span><span class="va">None</span>, stop_words<span class="op">=</span>stop_words)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-execution_count="15">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>X_train_v[features]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="15">
+<div class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>X_train_v[features]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="18">
 
 <div>
 
@@ -656,75 +789,380 @@ Getting polarity scores...</code></pre>
 </div>
 </div>
 </div>
+<div class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>vectors <span class="op">=</span> [col <span class="cf">for</span> col <span class="kw">in</span> X_train_v.columns <span class="cf">if</span> col <span class="kw">not</span> <span class="kw">in</span> features]</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>X_train_v[vectors]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="19">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>!</th>
+      <th>#</th>
+      <th>##book</th>
+      <th>##youtube</th>
+      <th>#034</th>
+      <th>#039</th>
+      <th>#06</th>
+      <th>#09</th>
+      <th>#1-1st</th>
+      <th>#1008pla</th>
+      <th>...</th>
+      <th></th>
+      <th>¡</th>
+      <th>¢</th>
+      <th>£</th>
+      <th>¤</th>
+      <th>©</th>
+      <th>«</th>
+      <th>¬</th>
+      <th>÷</th>
+      <th>⁄</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0.000000</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.000000</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0.118436</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.000000</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0.000000</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>6085</th>
+      <td>0.000000</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>6086</th>
+      <td>0.000000</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>6087</th>
+      <td>0.000000</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>6088</th>
+      <td>0.000000</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>6089</th>
+      <td>0.160096</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+  </tbody>
+</table>
+<p>6090 rows × 17781 columns</p>
+</div>
+</div>
+</div>
 </section>
 <section id="scale-data" class="level3">
 <h3 class="anchored" data-anchor-id="scale-data">Scale Data</h3>
-<div class="cell" data-execution_count="16">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># import sklearn standard scaler</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># import sklearn standard scaler</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-execution_count="17">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>X_train_f <span class="op">=</span> X_train_v[features]</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>X_test_f <span class="op">=</span> X_test_v[features]</span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="co"># instantiate the scaler</span></span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>scaler <span class="op">=</span> StandardScaler()</span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="co"># fit transform the training data</span></span>
-<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>X_train_fs <span class="op">=</span> scaler.fit_transform(X_train_f)</span>
-<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>X_test_fs <span class="op">=</span> scaler.transform(X_test_f)</span>
-<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>X_train_fs <span class="op">=</span> pd.DataFrame(X_train_fs, columns<span class="op">=</span>features, index<span class="op">=</span>X_train_f.index)</span>
-<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>X_test_fs <span class="op">=</span> pd.DataFrame(X_test_fs, columns<span class="op">=</span>features, index<span class="op">=</span>X_test_f.index)</span>
-<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>X_train_v[features] <span class="op">=</span> X_train_fs[features]</span>
-<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>X_test_v[features] <span class="op">=</span> X_test_fs[features]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>X_train_f <span class="op">=</span> X_train_v[features]</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>X_test_f <span class="op">=</span> X_test_v[features]</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="co"># instantiate the scaler</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>scaler <span class="op">=</span> StandardScaler()</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="co"># fit transform the training data</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>X_train_fs <span class="op">=</span> scaler.fit_transform(X_train_f)</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>X_test_fs <span class="op">=</span> scaler.transform(X_test_f)</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>X_train_fs <span class="op">=</span> pd.DataFrame(X_train_fs, columns<span class="op">=</span>features, index<span class="op">=</span>X_train_f.index)</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>X_test_fs <span class="op">=</span> pd.DataFrame(X_test_fs, columns<span class="op">=</span>features, index<span class="op">=</span>X_test_f.index)</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>X_train_v[features] <span class="op">=</span> X_train_fs[features]</span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>X_test_v[features] <span class="op">=</span> X_test_fs[features]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="train-model" class="level3">
 <h3 class="anchored" data-anchor-id="train-model">Train Model</h3>
 <p>First we convert the dataframes to numpy arrays to work with the keras api. I used the functional api to build the model. It has two hidden layers, a concatenated layer of the original input and previous hidden layers, and one more hidden layer before the output layer. I used the Adam optimizer and the binary crossentropy loss function. I also used the early stopping and checkpoint callbacks to save the best model. I used the fit method to train the model.</p>
-<div class="cell" data-execution_count="18">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>train_text <span class="op">=</span> X_train_v.drop(features, axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>test_text <span class="op">=</span> X_test_v.drop(features, axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>train_feats <span class="op">=</span> X_train_v[features]</span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>test_feats <span class="op">=</span> X_test_v[features]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="22">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>train_text <span class="op">=</span> X_train_v.drop(features, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>test_text <span class="op">=</span> X_test_v.drop(features, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>train_feats <span class="op">=</span> X_train_v[features]</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>test_feats <span class="op">=</span> X_test_v[features]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-execution_count="19">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>train_text_n <span class="op">=</span> train_text.to_numpy()</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>test_text_n <span class="op">=</span> test_text.to_numpy()</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>train_feats_n <span class="op">=</span> train_feats.to_numpy()</span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>test_feats_n <span class="op">=</span> test_feats.to_numpy()</span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>y_train_n <span class="op">=</span> y_train.to_numpy()</span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>y_test_n <span class="op">=</span> y_test.to_numpy()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="23">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>train_text_n <span class="op">=</span> train_text.to_numpy()</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>test_text_n <span class="op">=</span> test_text.to_numpy()</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>train_feats_n <span class="op">=</span> train_feats.to_numpy()</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>test_feats_n <span class="op">=</span> test_feats.to_numpy()</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>y_train_n <span class="op">=</span> y_train.to_numpy()</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>y_test_n <span class="op">=</span> y_test.to_numpy()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-execution_count="31">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>tf.keras.backend.clear_session()</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>act1 <span class="op">=</span> tf.keras.layers.LeakyReLU(alpha<span class="op">=</span><span class="fl">0.05</span>)</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>text_input_ <span class="op">=</span> tf.keras.layers.Input(shape<span class="op">=</span>(train_text_n.shape[<span class="dv">1</span>],), name<span class="op">=</span><span class="st">'text_input'</span>)</span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>text_layers <span class="op">=</span> tf.keras.layers.Dense(<span class="dv">32</span>, activation<span class="op">=</span>act1)(text_input_)</span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="co">#text_layers = tf.keras.layers.Dropout(0.2)(text_layers)</span></span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>feats_input_ <span class="op">=</span> tf.keras.layers.Input(shape<span class="op">=</span>(train_feats_n.shape[<span class="dv">1</span>],), name<span class="op">=</span><span class="st">'feats_input'</span>)</span>
-<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>feats_layers <span class="op">=</span> tf.keras.layers.Dense(<span class="dv">32</span>, activation<span class="op">=</span>act1)(feats_input_)</span>
-<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>feats_layers <span class="op">=</span> tf.keras.layers.Dropout(<span class="fl">0.1</span>)(feats_layers)</span>
-<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>concat_l <span class="op">=</span> tf.keras.layers.Concatenate()([text_layers, feats_layers])</span>
-<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>concat_i <span class="op">=</span> tf.keras.layers.Concatenate()([text_input_, feats_input_])</span>
-<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>concat <span class="op">=</span> tf.keras.layers.Concatenate()([concat_l, concat_i])</span>
-<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a>concat <span class="op">=</span> tf.keras.layers.Dropout(<span class="fl">0.1</span>)(concat)</span>
-<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>output_ <span class="op">=</span> tf.keras.layers.Dense(<span class="dv">1</span>, activation<span class="op">=</span><span class="st">'sigmoid'</span>)(concat)</span>
-<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> tf.keras.Model(inputs<span class="op">=</span>[text_input_, feats_input_], outputs<span class="op">=</span>output_)</span>
-<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a>model.summary()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="24">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>tf.keras.backend.clear_session()</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>act1 <span class="op">=</span> tf.keras.layers.LeakyReLU(alpha<span class="op">=</span><span class="fl">0.05</span>)</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>text_input_ <span class="op">=</span> tf.keras.layers.Input(shape<span class="op">=</span>(train_text_n.shape[<span class="dv">1</span>],), name<span class="op">=</span><span class="st">'text_input'</span>)</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>text_layers <span class="op">=</span> tf.keras.layers.Dense(<span class="dv">32</span>, activation<span class="op">=</span>act1)(text_input_)</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="co">#text_layers = tf.keras.layers.Dropout(0.2)(text_layers)</span></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>feats_input_ <span class="op">=</span> tf.keras.layers.Input(shape<span class="op">=</span>(train_feats_n.shape[<span class="dv">1</span>],), name<span class="op">=</span><span class="st">'feats_input'</span>)</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>feats_layers <span class="op">=</span> tf.keras.layers.Dense(<span class="dv">32</span>, activation<span class="op">=</span>act1)(feats_input_)</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>feats_layers <span class="op">=</span> tf.keras.layers.Dropout(<span class="fl">0.1</span>)(feats_layers)</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>concat_l <span class="op">=</span> tf.keras.layers.Concatenate()([text_layers, feats_layers])</span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>concat_i <span class="op">=</span> tf.keras.layers.Concatenate()([text_input_, feats_input_])</span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>concat <span class="op">=</span> tf.keras.layers.Concatenate()([concat_l, concat_i])</span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a>concat <span class="op">=</span> tf.keras.layers.Dropout(<span class="fl">0.1</span>)(concat)</span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a>output_ <span class="op">=</span> tf.keras.layers.Dense(<span class="dv">1</span>, activation<span class="op">=</span><span class="st">'sigmoid'</span>)(concat)</span>
+<span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> tf.keras.Model(inputs<span class="op">=</span>[text_input_, feats_input_], outputs<span class="op">=</span>output_)</span>
+<span id="cb29-22"><a href="#cb29-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-23"><a href="#cb29-23" aria-hidden="true" tabindex="-1"></a>model.summary()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Model: "model"
 __________________________________________________________________________________________________
@@ -760,531 +1198,615 @@ Non-trainable params: 0
 __________________________________________________________________________________________________</code></pre>
 </div>
 </div>
-<div class="cell" data-execution_count="32">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>opt <span class="op">=</span> tf.keras.optimizers.Adamax(learning_rate<span class="op">=</span><span class="fl">0.0003</span>)</span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>metric <span class="op">=</span> tf.keras.metrics.AUC()</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>model.<span class="bu">compile</span>(optimizer<span class="op">=</span>opt, loss<span class="op">=</span><span class="st">'binary_crossentropy'</span>, metrics<span class="op">=</span>metric)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="25">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>opt <span class="op">=</span> tf.keras.optimizers.Adamax(learning_rate<span class="op">=</span><span class="fl">0.0003</span>)</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>metric <span class="op">=</span> tf.keras.metrics.AUC()</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>model.<span class="bu">compile</span>(optimizer<span class="op">=</span>opt, loss<span class="op">=</span><span class="st">'binary_crossentropy'</span>, metrics<span class="op">=</span>metric)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-execution_count="33">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> absl.logging</span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>absl.logging.set_verbosity(absl.logging.ERROR)</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>callbacks <span class="op">=</span> [tf.keras.callbacks.EarlyStopping(monitor<span class="op">=</span><span class="st">'val_auc'</span>, patience<span class="op">=</span><span class="dv">4</span>, mode<span class="op">=</span><span class="st">'max'</span>),</span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>             tf.keras.callbacks.EarlyStopping(monitor<span class="op">=</span><span class="st">'val_loss'</span>, patience<span class="op">=</span><span class="dv">3</span>, mode<span class="op">=</span><span class="st">'min'</span>),</span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>             tf.keras.callbacks.ModelCheckpoint(filepath<span class="op">=</span><span class="st">'checkpoint.hd5'</span>, monitor<span class="op">=</span><span class="st">'val_auc'</span>, save_best_only<span class="op">=</span><span class="va">True</span>, mode<span class="op">=</span><span class="st">'max'</span>)</span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>             ]</span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>model_results <span class="op">=</span> model.fit([train_text, train_feats], y_train_n, validation_split<span class="op">=</span><span class="fl">0.02</span>,</span>
-<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>                          epochs<span class="op">=</span><span class="dv">100</span>, batch_size<span class="op">=</span><span class="dv">64</span>, callbacks<span class="op">=</span>callbacks,</span>
-<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>                          use_multiprocessing<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="26">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> absl.logging</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>absl.logging.set_verbosity(absl.logging.ERROR)</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>callbacks <span class="op">=</span> [tf.keras.callbacks.EarlyStopping(monitor<span class="op">=</span><span class="st">'val_auc'</span>, patience<span class="op">=</span><span class="dv">4</span>, mode<span class="op">=</span><span class="st">'max'</span>),</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>             tf.keras.callbacks.EarlyStopping(monitor<span class="op">=</span><span class="st">'val_loss'</span>, patience<span class="op">=</span><span class="dv">3</span>, mode<span class="op">=</span><span class="st">'min'</span>),</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>             tf.keras.callbacks.ModelCheckpoint(filepath<span class="op">=</span><span class="st">'checkpoint.hd5'</span>, monitor<span class="op">=</span><span class="st">'val_auc'</span>, save_best_only<span class="op">=</span><span class="va">True</span>, mode<span class="op">=</span><span class="st">'max'</span>)</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>             ]</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>model_results <span class="op">=</span> model.fit([train_text, train_feats], y_train_n, validation_split<span class="op">=</span><span class="fl">0.02</span>,</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>                          epochs<span class="op">=</span><span class="dv">100</span>, batch_size<span class="op">=</span><span class="dv">64</span>, callbacks<span class="op">=</span>callbacks,</span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>                          use_multiprocessing<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Epoch 1/100
-94/94 [==============================] - ETA: 0s - loss: 0.6810 - auc: 0.6380WARNING:tensorflow:Detecting that an object or model or tf.train.Checkpoint is being deleted with unrestored values. See the following logs for the specific values in question. To silence these warnings, use `status.expect_partial()`. See https://www.tensorflow.org/api_docs/python/tf/train/Checkpoint#restorefor details about the status object returned by the restore function.</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>WARNING:tensorflow:Detecting that an object or model or tf.train.Checkpoint is being deleted with unrestored values. See the following logs for the specific values in question. To silence these warnings, use `status.expect_partial()`. See https://www.tensorflow.org/api_docs/python/tf/train/Checkpoint#restorefor details about the status object returned by the restore function.</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>WARNING:tensorflow:Value in checkpoint could not be found in the restored object: (root).keras_api.metrics.0.total</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>WARNING:tensorflow:Value in checkpoint could not be found in the restored object: (root).keras_api.metrics.0.total</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>WARNING:tensorflow:Value in checkpoint could not be found in the restored object: (root).keras_api.metrics.0.count</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>WARNING:tensorflow:Value in checkpoint could not be found in the restored object: (root).keras_api.metrics.0.count</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>WARNING:tensorflow:Value in checkpoint could not be found in the restored object: (root).keras_api.metrics.1.true_positives</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>WARNING:tensorflow:Value in checkpoint could not be found in the restored object: (root).keras_api.metrics.1.true_positives</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>WARNING:tensorflow:Value in checkpoint could not be found in the restored object: (root).keras_api.metrics.1.true_negatives</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>WARNING:tensorflow:Value in checkpoint could not be found in the restored object: (root).keras_api.metrics.1.true_negatives</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>WARNING:tensorflow:Value in checkpoint could not be found in the restored object: (root).keras_api.metrics.1.false_positives</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>WARNING:tensorflow:Value in checkpoint could not be found in the restored object: (root).keras_api.metrics.1.false_positives</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>WARNING:tensorflow:Value in checkpoint could not be found in the restored object: (root).keras_api.metrics.1.false_negatives</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>WARNING:tensorflow:Value in checkpoint could not be found in the restored object: (root).keras_api.metrics.1.false_negatives</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+94/94 [==============================] - ETA: 0s - loss: 0.6846 - auc: 0.6286INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 6s 62ms/step - loss: 0.6810 - auc: 0.6380 - val_loss: 0.6689 - val_auc: 0.7194
+<pre><code>94/94 [==============================] - 4s 39ms/step - loss: 0.6846 - auc: 0.6286 - val_loss: 0.6754 - val_auc: 0.7030
 Epoch 2/100
-94/94 [==============================] - ETA: 0s - loss: 0.6648 - auc: 0.6938INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+94/94 [==============================] - ETA: 0s - loss: 0.6690 - auc: 0.7009INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 53ms/step - loss: 0.6648 - auc: 0.6938 - val_loss: 0.6518 - val_auc: 0.7375
+<pre><code>94/94 [==============================] - 3s 32ms/step - loss: 0.6690 - auc: 0.7009 - val_loss: 0.6590 - val_auc: 0.7297
 Epoch 3/100
-94/94 [==============================] - ETA: 0s - loss: 0.6507 - auc: 0.7144INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+94/94 [==============================] - ETA: 0s - loss: 0.6553 - auc: 0.7164INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 6s 62ms/step - loss: 0.6507 - auc: 0.7144 - val_loss: 0.6373 - val_auc: 0.7471
+<pre><code>94/94 [==============================] - 3s 28ms/step - loss: 0.6553 - auc: 0.7164 - val_loss: 0.6447 - val_auc: 0.7473
 Epoch 4/100
-94/94 [==============================] - ETA: 0s - loss: 0.6384 - auc: 0.7262INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+94/94 [==============================] - ETA: 0s - loss: 0.6438 - auc: 0.7232INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 54ms/step - loss: 0.6384 - auc: 0.7262 - val_loss: 0.6247 - val_auc: 0.7533
+<pre><code>94/94 [==============================] - 2s 27ms/step - loss: 0.6438 - auc: 0.7232 - val_loss: 0.6327 - val_auc: 0.7508
 Epoch 5/100
-94/94 [==============================] - ETA: 0s - loss: 0.6270 - auc: 0.7351INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+93/94 [============================&gt;.] - ETA: 0s - loss: 0.6329 - auc: 0.7321INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 53ms/step - loss: 0.6270 - auc: 0.7351 - val_loss: 0.6133 - val_auc: 0.7591
+<pre><code>94/94 [==============================] - 2s 24ms/step - loss: 0.6329 - auc: 0.7323 - val_loss: 0.6209 - val_auc: 0.7559
 Epoch 6/100
-94/94 [==============================] - ETA: 0s - loss: 0.6184 - auc: 0.7403INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+93/94 [============================&gt;.] - ETA: 0s - loss: 0.6225 - auc: 0.7389INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 53ms/step - loss: 0.6184 - auc: 0.7403 - val_loss: 0.6036 - val_auc: 0.7644
+<pre><code>94/94 [==============================] - 3s 27ms/step - loss: 0.6224 - auc: 0.7394 - val_loss: 0.6105 - val_auc: 0.7620
 Epoch 7/100
-93/94 [============================&gt;.] - ETA: 0s - loss: 0.6095 - auc: 0.7484INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+94/94 [==============================] - ETA: 0s - loss: 0.6139 - auc: 0.7446INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 54ms/step - loss: 0.6096 - auc: 0.7482 - val_loss: 0.5964 - val_auc: 0.7674
+<pre><code>94/94 [==============================] - 2s 24ms/step - loss: 0.6139 - auc: 0.7446 - val_loss: 0.6012 - val_auc: 0.7672
 Epoch 8/100
-94/94 [==============================] - ETA: 0s - loss: 0.6030 - auc: 0.7537INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+94/94 [==============================] - ETA: 0s - loss: 0.6037 - auc: 0.7547INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 57ms/step - loss: 0.6030 - auc: 0.7537 - val_loss: 0.5890 - val_auc: 0.7726
+<pre><code>94/94 [==============================] - 2s 25ms/step - loss: 0.6037 - auc: 0.7547 - val_loss: 0.5927 - val_auc: 0.7718
 Epoch 9/100
-94/94 [==============================] - ETA: 0s - loss: 0.5949 - auc: 0.7618INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+92/94 [============================&gt;.] - ETA: 0s - loss: 0.5983 - auc: 0.7567INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 50ms/step - loss: 0.5949 - auc: 0.7618 - val_loss: 0.5819 - val_auc: 0.7769
+<pre><code>94/94 [==============================] - 2s 22ms/step - loss: 0.5973 - auc: 0.7584 - val_loss: 0.5854 - val_auc: 0.7766
 Epoch 10/100
-93/94 [============================&gt;.] - ETA: 0s - loss: 0.5877 - auc: 0.7691INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+93/94 [============================&gt;.] - ETA: 0s - loss: 0.5892 - auc: 0.7662INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 51ms/step - loss: 0.5878 - auc: 0.7689 - val_loss: 0.5755 - val_auc: 0.7815
+<pre><code>94/94 [==============================] - 2s 23ms/step - loss: 0.5893 - auc: 0.7660 - val_loss: 0.5783 - val_auc: 0.7807
 Epoch 11/100
-93/94 [============================&gt;.] - ETA: 0s - loss: 0.5813 - auc: 0.7759INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+93/94 [============================&gt;.] - ETA: 0s - loss: 0.5833 - auc: 0.7704INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 56ms/step - loss: 0.5809 - auc: 0.7763 - val_loss: 0.5692 - val_auc: 0.7864
+<pre><code>94/94 [==============================] - 2s 23ms/step - loss: 0.5834 - auc: 0.7701 - val_loss: 0.5718 - val_auc: 0.7842
 Epoch 12/100
-94/94 [==============================] - ETA: 0s - loss: 0.5736 - auc: 0.7841INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+94/94 [==============================] - ETA: 0s - loss: 0.5742 - auc: 0.7810INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 52ms/step - loss: 0.5736 - auc: 0.7841 - val_loss: 0.5631 - val_auc: 0.7933
+<pre><code>94/94 [==============================] - 2s 23ms/step - loss: 0.5742 - auc: 0.7810 - val_loss: 0.5656 - val_auc: 0.7907
 Epoch 13/100
-94/94 [==============================] - ETA: 0s - loss: 0.5668 - auc: 0.7900INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+94/94 [==============================] - ETA: 0s - loss: 0.5676 - auc: 0.7875INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 56ms/step - loss: 0.5668 - auc: 0.7900 - val_loss: 0.5573 - val_auc: 0.7985
+<pre><code>94/94 [==============================] - 2s 25ms/step - loss: 0.5676 - auc: 0.7875 - val_loss: 0.5598 - val_auc: 0.7955
 Epoch 14/100
-94/94 [==============================] - ETA: 0s - loss: 0.5586 - auc: 0.8002INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+94/94 [==============================] - ETA: 0s - loss: 0.5609 - auc: 0.7945INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 51ms/step - loss: 0.5586 - auc: 0.8002 - val_loss: 0.5519 - val_auc: 0.8027
+<pre><code>94/94 [==============================] - 2s 25ms/step - loss: 0.5609 - auc: 0.7945 - val_loss: 0.5544 - val_auc: 0.7990
 Epoch 15/100
-94/94 [==============================] - ETA: 0s - loss: 0.5521 - auc: 0.8063INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+94/94 [==============================] - ETA: 0s - loss: 0.5538 - auc: 0.8022INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 52ms/step - loss: 0.5521 - auc: 0.8063 - val_loss: 0.5463 - val_auc: 0.8057
+<pre><code>94/94 [==============================] - 3s 28ms/step - loss: 0.5538 - auc: 0.8022 - val_loss: 0.5489 - val_auc: 0.8049
 Epoch 16/100
-94/94 [==============================] - ETA: 0s - loss: 0.5435 - auc: 0.8155INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+94/94 [==============================] - ETA: 0s - loss: 0.5455 - auc: 0.8120INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 51ms/step - loss: 0.5435 - auc: 0.8155 - val_loss: 0.5410 - val_auc: 0.8100
+<pre><code>94/94 [==============================] - 2s 23ms/step - loss: 0.5455 - auc: 0.8120 - val_loss: 0.5435 - val_auc: 0.8090
 Epoch 17/100
-94/94 [==============================] - ETA: 0s - loss: 0.5365 - auc: 0.8215INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+93/94 [============================&gt;.] - ETA: 0s - loss: 0.5376 - auc: 0.8194INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 50ms/step - loss: 0.5365 - auc: 0.8215 - val_loss: 0.5358 - val_auc: 0.8153
+<pre><code>94/94 [==============================] - 3s 28ms/step - loss: 0.5378 - auc: 0.8192 - val_loss: 0.5380 - val_auc: 0.8132
 Epoch 18/100
-93/94 [============================&gt;.] - ETA: 0s - loss: 0.5297 - auc: 0.8292INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+94/94 [==============================] - ETA: 0s - loss: 0.5304 - auc: 0.8267INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 50ms/step - loss: 0.5296 - auc: 0.8293 - val_loss: 0.5306 - val_auc: 0.8203
+<pre><code>94/94 [==============================] - 2s 24ms/step - loss: 0.5304 - auc: 0.8267 - val_loss: 0.5329 - val_auc: 0.8168
 Epoch 19/100
-94/94 [==============================] - ETA: 0s - loss: 0.5220 - auc: 0.8372INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+94/94 [==============================] - ETA: 0s - loss: 0.5220 - auc: 0.8360INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 52ms/step - loss: 0.5220 - auc: 0.8372 - val_loss: 0.5259 - val_auc: 0.8244
+<pre><code>94/94 [==============================] - 2s 24ms/step - loss: 0.5220 - auc: 0.8360 - val_loss: 0.5276 - val_auc: 0.8202
 Epoch 20/100
-94/94 [==============================] - ETA: 0s - loss: 0.5129 - auc: 0.8460INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+92/94 [============================&gt;.] - ETA: 0s - loss: 0.5144 - auc: 0.8429INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 54ms/step - loss: 0.5129 - auc: 0.8460 - val_loss: 0.5210 - val_auc: 0.8288
+<pre><code>94/94 [==============================] - 2s 25ms/step - loss: 0.5148 - auc: 0.8423 - val_loss: 0.5224 - val_auc: 0.8261
 Epoch 21/100
-93/94 [============================&gt;.] - ETA: 0s - loss: 0.5063 - auc: 0.8524INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+94/94 [==============================] - ETA: 0s - loss: 0.5064 - auc: 0.8504INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 52ms/step - loss: 0.5062 - auc: 0.8525 - val_loss: 0.5168 - val_auc: 0.8313
+<pre><code>94/94 [==============================] - 2s 23ms/step - loss: 0.5064 - auc: 0.8504 - val_loss: 0.5175 - val_auc: 0.8317
 Epoch 22/100
-94/94 [==============================] - ETA: 0s - loss: 0.4981 - auc: 0.8606INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+94/94 [==============================] - ETA: 0s - loss: 0.4990 - auc: 0.8572INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 55ms/step - loss: 0.4981 - auc: 0.8606 - val_loss: 0.5122 - val_auc: 0.8350
+<pre><code>94/94 [==============================] - 2s 24ms/step - loss: 0.4990 - auc: 0.8572 - val_loss: 0.5126 - val_auc: 0.8380
 Epoch 23/100
-94/94 [==============================] - ETA: 0s - loss: 0.4925 - auc: 0.8650INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+94/94 [==============================] - ETA: 0s - loss: 0.4902 - auc: 0.8655INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 56ms/step - loss: 0.4925 - auc: 0.8650 - val_loss: 0.5079 - val_auc: 0.8392
+<pre><code>94/94 [==============================] - 2s 24ms/step - loss: 0.4902 - auc: 0.8655 - val_loss: 0.5073 - val_auc: 0.8424
 Epoch 24/100
-93/94 [============================&gt;.] - ETA: 0s - loss: 0.4836 - auc: 0.8727INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+94/94 [==============================] - ETA: 0s - loss: 0.4816 - auc: 0.8733INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 52ms/step - loss: 0.4836 - auc: 0.8727 - val_loss: 0.5034 - val_auc: 0.8432
+<pre><code>94/94 [==============================] - 2s 24ms/step - loss: 0.4816 - auc: 0.8733 - val_loss: 0.5028 - val_auc: 0.8452
 Epoch 25/100
-94/94 [==============================] - ETA: 0s - loss: 0.4751 - auc: 0.8802INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+94/94 [==============================] - ETA: 0s - loss: 0.4743 - auc: 0.8796INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 54ms/step - loss: 0.4751 - auc: 0.8802 - val_loss: 0.4988 - val_auc: 0.8456
+<pre><code>94/94 [==============================] - 3s 29ms/step - loss: 0.4743 - auc: 0.8796 - val_loss: 0.4984 - val_auc: 0.8482
 Epoch 26/100
-94/94 [==============================] - ETA: 0s - loss: 0.4688 - auc: 0.8844INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+93/94 [============================&gt;.] - ETA: 0s - loss: 0.4670 - auc: 0.8860INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 54ms/step - loss: 0.4688 - auc: 0.8844 - val_loss: 0.4940 - val_auc: 0.8486
+<pre><code>94/94 [==============================] - 2s 24ms/step - loss: 0.4667 - auc: 0.8861 - val_loss: 0.4940 - val_auc: 0.8493
 Epoch 27/100
-94/94 [==============================] - ETA: 0s - loss: 0.4604 - auc: 0.8905INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+94/94 [==============================] - ETA: 0s - loss: 0.4596 - auc: 0.8910INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 53ms/step - loss: 0.4604 - auc: 0.8905 - val_loss: 0.4900 - val_auc: 0.8512
+<pre><code>94/94 [==============================] - 2s 22ms/step - loss: 0.4596 - auc: 0.8910 - val_loss: 0.4895 - val_auc: 0.8521
 Epoch 28/100
-94/94 [==============================] - ETA: 0s - loss: 0.4525 - auc: 0.8967INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+93/94 [============================&gt;.] - ETA: 0s - loss: 0.4505 - auc: 0.8981INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 54ms/step - loss: 0.4525 - auc: 0.8967 - val_loss: 0.4857 - val_auc: 0.8558
+<pre><code>94/94 [==============================] - 2s 24ms/step - loss: 0.4504 - auc: 0.8982 - val_loss: 0.4851 - val_auc: 0.8556
 Epoch 29/100
-94/94 [==============================] - ETA: 0s - loss: 0.4445 - auc: 0.9021INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+94/94 [==============================] - ETA: 0s - loss: 0.4438 - auc: 0.9017INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 52ms/step - loss: 0.4445 - auc: 0.9021 - val_loss: 0.4817 - val_auc: 0.8577
+<pre><code>94/94 [==============================] - 2s 24ms/step - loss: 0.4438 - auc: 0.9017 - val_loss: 0.4807 - val_auc: 0.8581
 Epoch 30/100
-94/94 [==============================] - ETA: 0s - loss: 0.4377 - auc: 0.9059INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+94/94 [==============================] - ETA: 0s - loss: 0.4357 - auc: 0.9072INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 56ms/step - loss: 0.4377 - auc: 0.9059 - val_loss: 0.4774 - val_auc: 0.8584
+<pre><code>94/94 [==============================] - 2s 26ms/step - loss: 0.4357 - auc: 0.9072 - val_loss: 0.4766 - val_auc: 0.8592
 Epoch 31/100
-94/94 [==============================] - ETA: 0s - loss: 0.4297 - auc: 0.9114INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+94/94 [==============================] - ETA: 0s - loss: 0.4285 - auc: 0.9120INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 54ms/step - loss: 0.4297 - auc: 0.9114 - val_loss: 0.4734 - val_auc: 0.8603
+<pre><code>94/94 [==============================] - 3s 27ms/step - loss: 0.4285 - auc: 0.9120 - val_loss: 0.4726 - val_auc: 0.8610
 Epoch 32/100
-94/94 [==============================] - ETA: 0s - loss: 0.4219 - auc: 0.9162INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+89/94 [===========================&gt;..] - ETA: 0s - loss: 0.4195 - auc: 0.9183INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 55ms/step - loss: 0.4219 - auc: 0.9162 - val_loss: 0.4692 - val_auc: 0.8610
+<pre><code>94/94 [==============================] - 2s 23ms/step - loss: 0.4199 - auc: 0.9176 - val_loss: 0.4686 - val_auc: 0.8626
 Epoch 33/100
-94/94 [==============================] - ETA: 0s - loss: 0.4148 - auc: 0.9199INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+94/94 [==============================] - ETA: 0s - loss: 0.4126 - auc: 0.9218INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 55ms/step - loss: 0.4148 - auc: 0.9199 - val_loss: 0.4651 - val_auc: 0.8622
+<pre><code>94/94 [==============================] - 2s 23ms/step - loss: 0.4126 - auc: 0.9218 - val_loss: 0.4648 - val_auc: 0.8642
 Epoch 34/100
-94/94 [==============================] - ETA: 0s - loss: 0.4059 - auc: 0.9245INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 54ms/step - loss: 0.4059 - auc: 0.9245 - val_loss: 0.4612 - val_auc: 0.8638
+94/94 [==============================] - 1s 12ms/step - loss: 0.4058 - auc: 0.9249 - val_loss: 0.4612 - val_auc: 0.8629
 Epoch 35/100
-94/94 [==============================] - ETA: 0s - loss: 0.3997 - auc: 0.9284INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+93/94 [============================&gt;.] - ETA: 0s - loss: 0.3988 - auc: 0.9282INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 53ms/step - loss: 0.3997 - auc: 0.9284 - val_loss: 0.4576 - val_auc: 0.8652
+<pre><code>94/94 [==============================] - 2s 24ms/step - loss: 0.3989 - auc: 0.9282 - val_loss: 0.4580 - val_auc: 0.8645
 Epoch 36/100
-94/94 [==============================] - ETA: 0s - loss: 0.3924 - auc: 0.9314INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+93/94 [============================&gt;.] - ETA: 0s - loss: 0.3915 - auc: 0.9323INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 54ms/step - loss: 0.3924 - auc: 0.9314 - val_loss: 0.4539 - val_auc: 0.8675
+<pre><code>94/94 [==============================] - 2s 27ms/step - loss: 0.3916 - auc: 0.9322 - val_loss: 0.4547 - val_auc: 0.8656
 Epoch 37/100
-93/94 [============================&gt;.] - ETA: 0s - loss: 0.3850 - auc: 0.9346INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+94/94 [==============================] - ETA: 0s - loss: 0.3845 - auc: 0.9364INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 53ms/step - loss: 0.3852 - auc: 0.9346 - val_loss: 0.4506 - val_auc: 0.8693
+<pre><code>94/94 [==============================] - 2s 24ms/step - loss: 0.3845 - auc: 0.9364 - val_loss: 0.4515 - val_auc: 0.8675
 Epoch 38/100
-93/94 [============================&gt;.] - ETA: 0s - loss: 0.3794 - auc: 0.9370INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+94/94 [==============================] - ETA: 0s - loss: 0.3781 - auc: 0.9384INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 57ms/step - loss: 0.3791 - auc: 0.9372 - val_loss: 0.4475 - val_auc: 0.8704
+<pre><code>94/94 [==============================] - 2s 24ms/step - loss: 0.3781 - auc: 0.9384 - val_loss: 0.4484 - val_auc: 0.8682
 Epoch 39/100
-94/94 [==============================] - ETA: 0s - loss: 0.3722 - auc: 0.9406INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+91/94 [============================&gt;.] - ETA: 0s - loss: 0.3742 - auc: 0.9393INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 54ms/step - loss: 0.3722 - auc: 0.9406 - val_loss: 0.4440 - val_auc: 0.8726
+<pre><code>94/94 [==============================] - 2s 23ms/step - loss: 0.3733 - auc: 0.9399 - val_loss: 0.4457 - val_auc: 0.8697
 Epoch 40/100
-94/94 [==============================] - ETA: 0s - loss: 0.3652 - auc: 0.9434INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+93/94 [============================&gt;.] - ETA: 0s - loss: 0.3657 - auc: 0.9435INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 52ms/step - loss: 0.3652 - auc: 0.9434 - val_loss: 0.4410 - val_auc: 0.8738
+<pre><code>94/94 [==============================] - 2s 23ms/step - loss: 0.3657 - auc: 0.9435 - val_loss: 0.4426 - val_auc: 0.8701
 Epoch 41/100
-94/94 [==============================] - ETA: 0s - loss: 0.3596 - auc: 0.9452INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+94/94 [==============================] - ETA: 0s - loss: 0.3610 - auc: 0.9445INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 52ms/step - loss: 0.3596 - auc: 0.9452 - val_loss: 0.4380 - val_auc: 0.8769
+<pre><code>94/94 [==============================] - 2s 25ms/step - loss: 0.3610 - auc: 0.9445 - val_loss: 0.4398 - val_auc: 0.8730
 Epoch 42/100
-93/94 [============================&gt;.] - ETA: 0s - loss: 0.3525 - auc: 0.9480INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+92/94 [============================&gt;.] - ETA: 0s - loss: 0.3548 - auc: 0.9471INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 54ms/step - loss: 0.3522 - auc: 0.9481 - val_loss: 0.4351 - val_auc: 0.8785
+<pre><code>94/94 [==============================] - 2s 22ms/step - loss: 0.3538 - auc: 0.9478 - val_loss: 0.4370 - val_auc: 0.8737
 Epoch 43/100
-93/94 [============================&gt;.] - ETA: 0s - loss: 0.3456 - auc: 0.9509INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+94/94 [==============================] - ETA: 0s - loss: 0.3470 - auc: 0.9504INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 53ms/step - loss: 0.3457 - auc: 0.9509 - val_loss: 0.4325 - val_auc: 0.8789
+<pre><code>94/94 [==============================] - 2s 25ms/step - loss: 0.3470 - auc: 0.9504 - val_loss: 0.4340 - val_auc: 0.8744
 Epoch 44/100
-94/94 [==============================] - ETA: 0s - loss: 0.3399 - auc: 0.9521INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+93/94 [============================&gt;.] - ETA: 0s - loss: 0.3415 - auc: 0.9525INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 57ms/step - loss: 0.3399 - auc: 0.9521 - val_loss: 0.4301 - val_auc: 0.8798
+<pre><code>94/94 [==============================] - 2s 23ms/step - loss: 0.3415 - auc: 0.9526 - val_loss: 0.4315 - val_auc: 0.8745
 Epoch 45/100
-94/94 [==============================] - ETA: 0s - loss: 0.3344 - auc: 0.9542INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+92/94 [============================&gt;.] - ETA: 0s - loss: 0.3359 - auc: 0.9542INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 50ms/step - loss: 0.3344 - auc: 0.9542 - val_loss: 0.4274 - val_auc: 0.8820
+<pre><code>94/94 [==============================] - 2s 25ms/step - loss: 0.3364 - auc: 0.9540 - val_loss: 0.4291 - val_auc: 0.8767
 Epoch 46/100
-94/94 [==============================] - 4s 41ms/step - loss: 0.3291 - auc: 0.9553 - val_loss: 0.4250 - val_auc: 0.8816
+94/94 [==============================] - ETA: 0s - loss: 0.3300 - auc: 0.9557INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 2s 24ms/step - loss: 0.3300 - auc: 0.9557 - val_loss: 0.4269 - val_auc: 0.8797
 Epoch 47/100
-93/94 [============================&gt;.] - ETA: 0s - loss: 0.3229 - auc: 0.9580INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+92/94 [============================&gt;.] - ETA: 0s - loss: 0.3246 - auc: 0.9574INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 54ms/step - loss: 0.3227 - auc: 0.9581 - val_loss: 0.4229 - val_auc: 0.8827
+<pre><code>94/94 [==============================] - 2s 24ms/step - loss: 0.3245 - auc: 0.9575 - val_loss: 0.4248 - val_auc: 0.8797
 Epoch 48/100
-94/94 [==============================] - ETA: 0s - loss: 0.3187 - auc: 0.9588INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+94/94 [==============================] - ETA: 0s - loss: 0.3182 - auc: 0.9601INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 51ms/step - loss: 0.3187 - auc: 0.9588 - val_loss: 0.4208 - val_auc: 0.8835
+<pre><code>94/94 [==============================] - 2s 22ms/step - loss: 0.3182 - auc: 0.9601 - val_loss: 0.4224 - val_auc: 0.8802
 Epoch 49/100
-94/94 [==============================] - ETA: 0s - loss: 0.3125 - auc: 0.9610INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+94/94 [==============================] - ETA: 0s - loss: 0.3139 - auc: 0.9606INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 54ms/step - loss: 0.3125 - auc: 0.9610 - val_loss: 0.4188 - val_auc: 0.8845
+<pre><code>94/94 [==============================] - 2s 23ms/step - loss: 0.3139 - auc: 0.9606 - val_loss: 0.4205 - val_auc: 0.8819
 Epoch 50/100
-94/94 [==============================] - 4s 44ms/step - loss: 0.3074 - auc: 0.9619 - val_loss: 0.4167 - val_auc: 0.8834
+94/94 [==============================] - 1s 12ms/step - loss: 0.3082 - auc: 0.9624 - val_loss: 0.4182 - val_auc: 0.8815
 Epoch 51/100
-94/94 [==============================] - 4s 40ms/step - loss: 0.3024 - auc: 0.9634 - val_loss: 0.4150 - val_auc: 0.8843
+94/94 [==============================] - ETA: 0s - loss: 0.3038 - auc: 0.9631INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 2s 23ms/step - loss: 0.3038 - auc: 0.9631 - val_loss: 0.4163 - val_auc: 0.8820
 Epoch 52/100
-94/94 [==============================] - ETA: 0s - loss: 0.2978 - auc: 0.9645INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+92/94 [============================&gt;.] - ETA: 0s - loss: 0.2997 - auc: 0.9642INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 48ms/step - loss: 0.2978 - auc: 0.9645 - val_loss: 0.4132 - val_auc: 0.8846
+<pre><code>94/94 [==============================] - 2s 23ms/step - loss: 0.2996 - auc: 0.9644 - val_loss: 0.4142 - val_auc: 0.8830
 Epoch 53/100
-94/94 [==============================] - ETA: 0s - loss: 0.2929 - auc: 0.9663INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+94/94 [==============================] - ETA: 0s - loss: 0.2939 - auc: 0.9653INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 52ms/step - loss: 0.2929 - auc: 0.9663 - val_loss: 0.4114 - val_auc: 0.8852
+<pre><code>94/94 [==============================] - 2s 25ms/step - loss: 0.2939 - auc: 0.9653 - val_loss: 0.4122 - val_auc: 0.8841
 Epoch 54/100
-94/94 [==============================] - ETA: 0s - loss: 0.2885 - auc: 0.9669INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+94/94 [==============================] - ETA: 0s - loss: 0.2898 - auc: 0.9667INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 5s 52ms/step - loss: 0.2885 - auc: 0.9669 - val_loss: 0.4099 - val_auc: 0.8856
+<pre><code>94/94 [==============================] - 2s 23ms/step - loss: 0.2898 - auc: 0.9667 - val_loss: 0.4108 - val_auc: 0.8852
 Epoch 55/100
-93/94 [============================&gt;.] - ETA: 0s - loss: 0.2846 - auc: 0.9680INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+94/94 [==============================] - ETA: 0s - loss: 0.2841 - auc: 0.9685INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
 <pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>94/94 [==============================] - 4s 48ms/step - loss: 0.2843 - auc: 0.9681 - val_loss: 0.4082 - val_auc: 0.8860
+<pre><code>94/94 [==============================] - 2s 25ms/step - loss: 0.2841 - auc: 0.9685 - val_loss: 0.4093 - val_auc: 0.8861
 Epoch 56/100
-94/94 [==============================] - 4s 43ms/step - loss: 0.2788 - auc: 0.9698 - val_loss: 0.4067 - val_auc: 0.8850
+93/94 [============================&gt;.] - ETA: 0s - loss: 0.2801 - auc: 0.9694INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 2s 24ms/step - loss: 0.2802 - auc: 0.9694 - val_loss: 0.4078 - val_auc: 0.8868
 Epoch 57/100
-94/94 [==============================] - 4s 43ms/step - loss: 0.2757 - auc: 0.9701 - val_loss: 0.4053 - val_auc: 0.8854
+92/94 [============================&gt;.] - ETA: 0s - loss: 0.2773 - auc: 0.9699INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 2s 25ms/step - loss: 0.2768 - auc: 0.9700 - val_loss: 0.4064 - val_auc: 0.8869
 Epoch 58/100
-94/94 [==============================] - 4s 42ms/step - loss: 0.2695 - auc: 0.9721 - val_loss: 0.4038 - val_auc: 0.8857
+93/94 [============================&gt;.] - ETA: 0s - loss: 0.2719 - auc: 0.9712INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 2s 24ms/step - loss: 0.2720 - auc: 0.9711 - val_loss: 0.4052 - val_auc: 0.8872
 Epoch 59/100
-94/94 [==============================] - 4s 42ms/step - loss: 0.2668 - auc: 0.9727 - val_loss: 0.4029 - val_auc: 0.8856</code></pre>
+92/94 [============================&gt;.] - ETA: 0s - loss: 0.2678 - auc: 0.9726INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 2s 24ms/step - loss: 0.2676 - auc: 0.9724 - val_loss: 0.4036 - val_auc: 0.8882
+Epoch 60/100
+94/94 [==============================] - 1s 13ms/step - loss: 0.2631 - auc: 0.9734 - val_loss: 0.4025 - val_auc: 0.8879
+Epoch 61/100
+94/94 [==============================] - 1s 13ms/step - loss: 0.2604 - auc: 0.9736 - val_loss: 0.4010 - val_auc: 0.8882
+Epoch 62/100
+94/94 [==============================] - 1s 12ms/step - loss: 0.2566 - auc: 0.9742 - val_loss: 0.3999 - val_auc: 0.8882
+Epoch 63/100
+94/94 [==============================] - ETA: 0s - loss: 0.2510 - auc: 0.9756INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 2s 25ms/step - loss: 0.2510 - auc: 0.9756 - val_loss: 0.3986 - val_auc: 0.8884
+Epoch 64/100
+94/94 [==============================] - ETA: 0s - loss: 0.2468 - auc: 0.9766INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 2s 25ms/step - loss: 0.2468 - auc: 0.9766 - val_loss: 0.3976 - val_auc: 0.8884
+Epoch 65/100
+94/94 [==============================] - 1s 14ms/step - loss: 0.2421 - auc: 0.9775 - val_loss: 0.3966 - val_auc: 0.8884
+Epoch 66/100
+94/94 [==============================] - ETA: 0s - loss: 0.2400 - auc: 0.9778INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 2s 21ms/step - loss: 0.2400 - auc: 0.9778 - val_loss: 0.3955 - val_auc: 0.8895
+Epoch 67/100
+94/94 [==============================] - 1s 16ms/step - loss: 0.2371 - auc: 0.9783 - val_loss: 0.3947 - val_auc: 0.8893
+Epoch 68/100
+94/94 [==============================] - ETA: 0s - loss: 0.2338 - auc: 0.9789INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 2s 23ms/step - loss: 0.2338 - auc: 0.9789 - val_loss: 0.3934 - val_auc: 0.8898
+Epoch 69/100
+94/94 [==============================] - 1s 12ms/step - loss: 0.2287 - auc: 0.9803 - val_loss: 0.3927 - val_auc: 0.8893
+Epoch 70/100
+94/94 [==============================] - ETA: 0s - loss: 0.2254 - auc: 0.9807INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 2s 25ms/step - loss: 0.2254 - auc: 0.9807 - val_loss: 0.3917 - val_auc: 0.8905
+Epoch 71/100
+94/94 [==============================] - 1s 14ms/step - loss: 0.2216 - auc: 0.9813 - val_loss: 0.3911 - val_auc: 0.8903
+Epoch 72/100
+93/94 [============================&gt;.] - ETA: 0s - loss: 0.2185 - auc: 0.9823INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 2s 22ms/step - loss: 0.2186 - auc: 0.9823 - val_loss: 0.3902 - val_auc: 0.8908
+Epoch 73/100
+93/94 [============================&gt;.] - ETA: 0s - loss: 0.2152 - auc: 0.9827INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 2s 24ms/step - loss: 0.2152 - auc: 0.9827 - val_loss: 0.3893 - val_auc: 0.8912
+Epoch 74/100
+94/94 [==============================] - ETA: 0s - loss: 0.2119 - auc: 0.9831INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 2s 26ms/step - loss: 0.2119 - auc: 0.9831 - val_loss: 0.3887 - val_auc: 0.8925
+Epoch 75/100
+94/94 [==============================] - 1s 13ms/step - loss: 0.2099 - auc: 0.9832 - val_loss: 0.3882 - val_auc: 0.8920
+Epoch 76/100
+93/94 [============================&gt;.] - ETA: 0s - loss: 0.2069 - auc: 0.9837INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>INFO:tensorflow:Assets written to: checkpoint.hd5\assets</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>94/94 [==============================] - 2s 23ms/step - loss: 0.2067 - auc: 0.9838 - val_loss: 0.3870 - val_auc: 0.8938
+Epoch 77/100
+94/94 [==============================] - 1s 12ms/step - loss: 0.2039 - auc: 0.9846 - val_loss: 0.3867 - val_auc: 0.8928
+Epoch 78/100
+94/94 [==============================] - 1s 16ms/step - loss: 0.1999 - auc: 0.9854 - val_loss: 0.3859 - val_auc: 0.8931
+Epoch 79/100
+94/94 [==============================] - 1s 14ms/step - loss: 0.1976 - auc: 0.9856 - val_loss: 0.3856 - val_auc: 0.8936
+Epoch 80/100
+94/94 [==============================] - 1s 15ms/step - loss: 0.1952 - auc: 0.9858 - val_loss: 0.3855 - val_auc: 0.8932</code></pre>
 </div>
 </div>
-<div class="cell" data-execution_count="34">
-<div class="sourceCode cell-code" id="cb146"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb146-1"><a href="#cb146-1" aria-hidden="true" tabindex="-1"></a>plot_history(model_results)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="27">
+<div class="sourceCode cell-code" id="cb166"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb166-1"><a href="#cb166-1" aria-hidden="true" tabindex="-1"></a>plot_history(model_results)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="nlp_ann_files/figure-html/cell-24-output-1.png" class="img-fluid"></p>
+<p><img src="nlp_ann_files/figure-html/cell-28-output-1.png" class="img-fluid"></p>
 </div>
 </div>
-<p>Above is a plot of the training and validation accuracy and loss. The model seems to be overfitting more as the epochs increase, and we can see the best epoch for loss is around 6, where the best epoch for accuracy is around 7. This indicates that the model may be overfitting and we should stop training the model at around 6 epochs or 7 epochs. However, the model may also be improved by changing the optimizer, learning rate, adding more layers or the amount of training data avaliable.</p>
+<p>Above is a plot of the training and validation accuracy and loss. The model seems to be overfitting more as the epochs increase, and we can see the best epoch for loss is around 79, where the best epoch for accuracy is around 76. This indicates that the model may be overfitting and may not perform well when deployed in the real world. However, the model may also be improved by changing the optimizer, learning rate, adding more layers or the amount of training data avaliable.</p>
 </section>
 <section id="evaluate-model" class="level3">
 <h3 class="anchored" data-anchor-id="evaluate-model">Evaluate Model</h3>
-<div class="cell" data-execution_count="35">
-<div class="sourceCode cell-code" id="cb147"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb147-1"><a href="#cb147-1" aria-hidden="true" tabindex="-1"></a>model.load_weights(<span class="st">'checkpoint.hd5'</span>)</span>
-<span id="cb147-2"><a href="#cb147-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb147-3"><a href="#cb147-3" aria-hidden="true" tabindex="-1"></a>model.evaluate([test_text, test_feats], y_test_n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="31">
+<div class="sourceCode cell-code" id="cb167"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb167-1"><a href="#cb167-1" aria-hidden="true" tabindex="-1"></a>model.load_weights(<span class="st">'checkpoint.hd5'</span>)</span>
+<span id="cb167-2"><a href="#cb167-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb167-3"><a href="#cb167-3" aria-hidden="true" tabindex="-1"></a>model.evaluate([test_text, test_feats], y_test_n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>48/48 [==============================] - 2s 47ms/step - loss: 0.4407 - auc: 0.8647</code></pre>
+<pre><code>48/48 [==============================] - 2s 35ms/step - loss: 0.4505 - auc: 0.8625</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="35">
-<pre><code>[0.4406600296497345, 0.8646914958953857]</code></pre>
+<div class="cell-output cell-output-display" data-execution_count="31">
+<pre><code>[0.45050153136253357, 0.8624657392501831]</code></pre>
 </div>
 </div>
-<div class="cell" data-execution_count="36">
-<div class="sourceCode cell-code" id="cb150"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb150-1"><a href="#cb150-1" aria-hidden="true" tabindex="-1"></a>plot_roc([train_text, train_feats], [test_text, test_feats], y_train_n, y_test_n, model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-execution_count="29">
+<div class="sourceCode cell-code" id="cb170"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb170-1"><a href="#cb170-1" aria-hidden="true" tabindex="-1"></a>plot_roc([train_text, train_feats], [test_text, test_feats], y_train_n, y_test_n, model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>191/191 [==============================] - 9s 49ms/step
-48/48 [==============================] - 2s 49ms/step</code></pre>
+<pre><code>191/191 [==============================] - 6s 33ms/step
+48/48 [==============================] - 2s 36ms/step</code></pre>
 </div>
 <div class="cell-output cell-output-display">
-<p><img src="nlp_ann_files/figure-html/cell-26-output-2.png" class="img-fluid"></p>
+<p><img src="nlp_ann_files/figure-html/cell-30-output-2.png" class="img-fluid"></p>
 </div>
 </div>
-<p>Above we see the results for our test data set. The model has an AUC of .865, which is not bad. However, from the ROC AUC plot above we can see that the model is still overfitting to the training data and is not generalizing to the test data as well as it could. This could be due to many factors, such as the amount or accuracy of training data, the amount of features, the model architecture, the learning rate, and the amount of epochs. However, the model is still able to predict wheather or not a tweet is about a real disaster with a decent accuracy.</p>
+<p>Above we see the results for our test data set. The model has an AUC of .86, which is not bad. However, from the ROC AUC plot above we can see that the model is still overfitting to the training data and is not generalizing to the test data as well as it could. This could be due to many factors, such as the amount or accuracy of training data, the amount of features, the model architecture, the learning rate, and the amount of epochs. However, the model is still able to predict wheather or not a tweet is about a real disaster with a decent accuracy.</p>
 
 
 </section>
